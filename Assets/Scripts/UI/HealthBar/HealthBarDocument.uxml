@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Scripts/UI/HealthBar/HealthBarStyle.uss?fileID=7433441132597879392&amp;guid=9f88053f343e6554bb7dc485d1d104b7&amp;type=3#HealthBarStyle" />
+    <ui:VisualElement class="healthbar-container">
+        <ui:VisualElement class="current-health" />
+    </ui:VisualElement>
+</ui:UXML>

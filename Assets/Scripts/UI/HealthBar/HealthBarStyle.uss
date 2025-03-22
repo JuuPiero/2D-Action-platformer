@@ -1,0 +1,17 @@
+.healthbar-container {
+    max-width: 300px;
+    height: 30px;
+    border-radius: 5px;
+    border-width: 3px;
+    border-color: black;
+    /* top: 10px; */
+    /* left: 10px; */
+    padding: 0;
+}
+
+.current-health {
+    background-color: red;
+    height: 100%;
+    width: 100%;
+    flex-grow: 1;
+}

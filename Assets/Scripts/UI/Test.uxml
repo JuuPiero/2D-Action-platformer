@@ -1,0 +1,3 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="VisualElement" style="flex-grow: 1; width: 352px; height: 313px; background-image: url(&quot;project://database/Assets/Sprites/Knight_player/Attack_KG_1.png?fileID=-1381907602&amp;guid=406e541101917f84a887f780ac1d0863&amp;type=3#Attack_KG_1_0&quot;);" />
+</ui:UXML>
