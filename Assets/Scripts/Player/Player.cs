@@ -13,6 +13,8 @@ public class Player : MonoBehaviour, IDamageable
 
     public Transform groundCheck;
     public Transform wallCheck;
+    public Transform ledgeCheck;
+
     [field: SerializeField] public Inventory Inventory { get; private set; }
 
 
@@ -20,18 +22,20 @@ public class Player : MonoBehaviour, IDamageable
     public bool isFacingRight = true;
     [SerializeField] private bool _isGrounded;
     public bool isTriggerShieldBash = false; //COUNTER ATTACK
-    public bool isDeath = false; //COUNTER ATTACK
 
     public bool IsGrounded => _isGrounded;
-    private bool _isTouchingWall;
+    [SerializeField] private bool _isTouchingWall;
     public bool IsTouchingWall => _isTouchingWall;
-    public int CurrentHealth { get ; set; }
+    [SerializeField] private bool _isTouchingLedge;
+    public bool IsTouchingLedge => _isTouchingLedge;
+
+    [field: SerializeField] public int CurrentHealth { get ; set; }
     public float CurrentStamina { get ; set; }
     public float CurrentMana { get ; set; }
 
     public bool CanPush {get; set;} = false;
     
-
+    public bool canLedgeGrab = false;
 
 
     [Header("Attack")]
@@ -43,7 +47,6 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] public CooldownTimer shieldBashTimer;
     [SerializeField] public CooldownTimer spellCastTimer;
     [SerializeField] public CooldownTimer dashTimer;
-    [SerializeField] public CooldownTimer stunTimer;
 
 
     [Header("Data")]
@@ -61,8 +64,10 @@ public class Player : MonoBehaviour, IDamageable
 
     void Start()
     {
+        //SORTING STATE BY PRIORYTY
         StateMachine.AddState(new PlayerSwordFallState("PlayerSwordFall", this));
         StateMachine.AddState(new PlayerFallState("PlayerFall", this));
+        StateMachine.AddState(new PlayerStunState("PlayerStun", this));
         StateMachine.AddState(new PlayerDashState("PlayerDash", this));
         StateMachine.AddState(new PlayerDieState("PlayerDie", this));
         StateMachine.AddState(new PlayerSwordJumpState("PlayerSwordJump", this));
@@ -71,10 +76,9 @@ public class Player : MonoBehaviour, IDamageable
         StateMachine.AddState(new PlayerShieldIdleState("PlayerShieldIdle", this));
         StateMachine.AddState(new PlayerShieldUpState("PlayerShieldUp", this));
         StateMachine.AddState(new PlayerShieldBashState("PlayerShieldBash", this));
-        StateMachine.AddState(new PlayerStunState("PlayerStun", this));
+        //StateMachine.AddState(new PlayerLedgeGrabState("PlayerLedgeGrab", this));
         StateMachine.AddState(new PlayerLightAttackState("PlayerAttack", this));
         StateMachine.AddState(new PlayerHeavyAttackState("PlayerHeavyAttack", this));
-        StateMachine.AddState(new PlayerWallClimbState("PlayerWallClimb", this));
         StateMachine.AddState(new PlayerWallSlideState("PlayerWallSlide", this));
         StateMachine.AddState(new PlayerSwordLandState("PlayerSwordLand", this));
         StateMachine.AddState(new PlayerLandState("PlayerLand", this));
@@ -90,14 +94,19 @@ public class Player : MonoBehaviour, IDamageable
         CurrentStamina = Data.maxStamina;
         CurrentMana = Data.maxMana;
     }
+  
 
-  
-  
-    void Update()
-    {
+    void Update() {
         CheckFlip();
-        _isGrounded = Physics2D.OverlapCircle(groundCheck.position, Data.groundCheckRadius, Data.whatIsGround);
-        _isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, Data.wallCheckDistance * transform.localScale.x, Data.whatIsGround);
+        CheckCollision();
+        canLedgeGrab = IsTouchingWall && !IsTouchingLedge;
+
+        if(canLedgeGrab) {
+            
+            //RB.velocity = Vector2.zero;
+            //transform.position = new Vector2(transform.position.x + 0.8f, transform.position.y + 1f);
+            //canLedgeGrab = false;
+        }
 
         if (InputHandler.JumpPressed) {
             Jump();
@@ -105,7 +114,6 @@ public class Player : MonoBehaviour, IDamageable
 
         if (IsGrounded && !InputHandler.JumpPressed) jumpCount = 0; // Reset khi chạm đất
 
-        isStuning = !stunTimer.IsReady;
         isAttacking = !combatCooldown.IsReady;
         if(!isAttacking) PlayerLightAttackState.attackIndex = 1;
    
@@ -117,6 +125,12 @@ public class Player : MonoBehaviour, IDamageable
         dashTimer.Update(Time.deltaTime);
 
         StateMachine.Update();
+    }
+
+    void CheckCollision() {
+        _isGrounded = Physics2D.OverlapCircle(groundCheck.position, Data.groundCheckRadius, Data.whatIsGround);
+        _isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, Data.wallCheckDistance * transform.localScale.x, Data.whatIsGround);
+        _isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, Data.wallCheckDistance * transform.localScale.x, Data.whatIsGround);
     }
 
  
@@ -133,6 +147,11 @@ public class Player : MonoBehaviour, IDamageable
             new Vector3((wallCheck.position.x + Data.wallCheckDistance * transform.localScale.x),
             wallCheck.position.y,
             wallCheck.position.z));
+
+        Gizmos.DrawLine(ledgeCheck.position,
+            new Vector3((ledgeCheck.position.x + Data.wallCheckDistance * transform.localScale.x),
+            ledgeCheck.position.y,
+            ledgeCheck.position.z));
     }
 
     public void Jump() {
@@ -160,25 +179,37 @@ public class Player : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(0.5f);
         isTriggerShieldBash = false;
     }
-  
+    
+    public void Knockback(Vector2 direction) {
+        StartCoroutine(ApplyKnockback(direction, Data.knockbackForce));
+    }
+    private IEnumerator ApplyKnockback(Vector2 direction, float force) {
+        float knockbackTime = 0.1f;
+        float timer = 0;
+        while (timer < knockbackTime) {
+            transform.Translate(direction * force * Time.deltaTime);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+    }
+
     public void Damage(int damage) {
+        
         if(StateMachine.CurrentState is PlayerShieldIdleState) {
+            AudioManager.Instance?.PlaySFX("ShieldGuard");
             isTriggerShieldBash = true;
             StartCoroutine(ResetShieldBashTrigger());
             return;
         }
 
         CurrentHealth -= damage;
-        stunTimer.Start(Data.stunTime);
+        isStuning = true;
+        // stunTimer.Start(Data.stunTime);
 
         if(CurrentHealth <= 0) {
-            CurrentHealth = 0;
             Die();
         }
     }
 
-    public void Die()
-    {
-        isDeath = true;
-    }
+    public void Die() => CurrentHealth = 0; 
 }

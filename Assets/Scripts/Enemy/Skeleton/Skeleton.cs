@@ -7,6 +7,8 @@ public class Skeleton : Enemy {
 
     public Rigidbody2D RB  { get; protected set; }
 
+    public Vector2 startPosition;
+
     public CooldownTimer attackTimer;
     public bool canChase;
     public bool canAttack;
@@ -18,6 +20,8 @@ public class Skeleton : Enemy {
         StateMachine = new StateMachine();
 
         CurrentHealth = Data.maxHealthPoint;
+
+        startPosition = transform.position;
     }
 
     protected override void Start()
@@ -54,9 +58,8 @@ public class Skeleton : Enemy {
         Gizmos.DrawWireSphere(attackPoint.position, Data.attackRadius);
     }
 
-    public override void Damage(int damage)
-    {
-        attackTimer.Start(Data.attackCooldownTime);
+    public override void Damage(int damage) {
+        attackTimer.Start(1f);
         base.Damage(damage);
     }
    

@@ -34,9 +34,12 @@ public class PlayerDataSO : ScriptableObject
 
     [Header("Attack")]
     public float combatTime = 5f;
-    public float attackCooldownTime = 2f;
+    public float attackCooldownTime = 1f;
     public float shieldBashCooldownTime = 2f;
     public float stunTime = 0.8f;
+
+    public float knockbackForce = 4f;
+
 
     public int basicAttackDamage = 20;
     public int heavyAttackDamage = 20;

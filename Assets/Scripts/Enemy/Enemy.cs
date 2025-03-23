@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, IDamageable 
-{
+public class Enemy : MonoBehaviour, IDamageable {
     [SerializeField] public LayerMask playerLayer;
     [SerializeField] protected Player _targetPlayer;
 

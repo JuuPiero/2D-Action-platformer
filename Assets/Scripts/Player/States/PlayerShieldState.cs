@@ -16,14 +16,12 @@ public class PlayerShieldIdleState : PlayerState
     GameObject _shield = null;
     CooldownTimer _createShieldTimer;
 
-    public override bool IsMatchingConditions()
-    {
+    public override bool IsMatchingConditions() {
         return _player.IsGrounded && _player.InputHandler.IsHoldingShield;
     }
-    public override void Enter() 
-    {
+    public override void Enter() {
         base.Enter();
-        _createShieldTimer.Start(1f);
+        _createShieldTimer.Start(0.8f);
     }
 
     public override void Exit() 
@@ -41,6 +39,9 @@ public class PlayerShieldIdleState : PlayerState
 
         if(_shield == null && _createShieldTimer.IsReady) {
             _shield = VFXManager.Instance?.InstantiateEffect("Shield", _player.transform.position);
+        }
+        if(_shield != null) {
+            _shield.transform.position = _player.transform.position;
         }
     }
   

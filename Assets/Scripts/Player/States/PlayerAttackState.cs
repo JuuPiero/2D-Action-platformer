@@ -77,15 +77,17 @@ public class PlayerLightAttackState : PlayerState {
             attackIndex = 1;
         }
         AnimationBoolName = AnimationBaseName + "_" + attackIndex;
+        AudioManager.Instance?.PlaySFX(AnimationBoolName);
         base.Enter();
-        AudioManager.Instance?.PlaySFX("PlayerAttack");
+        
+        // AudioManager.Instance?.PlaySFX("PlayerAttack");
+
     }
 
 
     public override void Exit() {
         base.Exit();
         attackIndex++;
-        _player.GetComponentInChildren<PlayerAnimation>().OnAttack -= Attack;
         _player.attackCooldown.Start(_player.Data.attackCooldownTime);
     }
 
@@ -100,6 +102,7 @@ public class PlayerLightAttackState : PlayerState {
             enemy.GetComponent<IDamageable>()?.Damage(20);
             Debug.Log(enemy.gameObject.name);
         }
+        _player.GetComponentInChildren<PlayerAnimation>().OnAttack -= Attack;
         CanExit = true;
     }
 

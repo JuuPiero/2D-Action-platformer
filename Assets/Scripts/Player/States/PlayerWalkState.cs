@@ -15,16 +15,21 @@ public class PlayerWalkState : PlayerState
     public override void Update()
     {
         base.Update();
-        if (AudioManager.Instance != null && !AudioManager.Instance.sfxSource.isPlaying)
-        {
-            AudioManager.Instance.PlaySFX("PlayerWalk");
+        // if(!AudioManager.Instance.sfxSource.isPlaying) {
+        //     return;
+        // }
+        // else {
+        //     AudioManager.Instance?.PlaySFX("PlayerWalk");
+        // }
+        if (AudioManager.Instance != null && !AudioManager.Instance.sfxSource.isPlaying) {
+            AudioManager.Instance?.PlaySFX("PlayerWalk");
         }
 
     }
 
     public override void Exit() {
         base.Exit();
-        AudioManager.Instance?.StopLoopingSFX();
+        AudioManager.Instance?.sfxSource.Stop();
     }
 }
 
