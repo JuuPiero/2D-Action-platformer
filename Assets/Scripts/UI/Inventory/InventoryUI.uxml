@@ -1,0 +1,26 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Scripts/UI/Inventory/InventoryUI.uss?fileID=7433441132597879392&amp;guid=f56b4a9ec2e8a4b49932e5263e667c1d&amp;type=3#InventoryUI" />
+    <ui:VisualElement class="inventory-container">
+        <ui:VisualElement class="tab-container">
+            <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button" class="tab-btn" />
+            <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button" class="tab-btn" />
+            <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button" class="tab-btn" />
+            <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button" class="tab-btn" />
+            <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button" class="tab-btn" />
+        </ui:VisualElement>
+        <ui:VisualElement class="inventory-centre">
+            <ui:VisualElement class="inventory-text">
+                <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+            </ui:VisualElement>
+            <ui:VisualElement class="list-item-container">
+                <ui:ScrollView>
+                    <ui:VisualElement name="VisualElement" class="list-item">
+                        <ui:Button class="slot-item" text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                       
+                    </ui:VisualElement>
+                </ui:ScrollView>
+            </ui:VisualElement>
+            <ui:VisualElement class="inventory-bottom" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -23,8 +23,7 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    void Start()
-    {
+    void Start() {
         if (_player?.Inventory != null)
         {
             _player.Inventory.OnInventoryChanged += ResetInventory;
@@ -52,7 +51,7 @@ public class InventoryUI : MonoBehaviour
             item.Q<Image>("itemIcon").image = slot.itemData.icon.texture;
             // item.Q<Label>("itemQuantity").text = "x" + slot.quantity.ToString();
             // item.Query<Label>().Class("item-quantity").First().text = slot.quantity.ToString();
-            item.GetElementByClassName<Label>("item-quantity").text = slot.quantity.ToString();
+            item.GetElementByClassName<Label>("item-quantity").text = "x" + slot.quantity.ToString();
 
             inventoryContainer.Add(item);
 
@@ -63,7 +62,7 @@ public class InventoryUI : MonoBehaviour
                 //     item.GetElementByName<Label>("item").RemoveFromClassList("selected");
                 // });
                 item.GetElementByClassName<VisualElement>("item").AddToClassList("selected");
-                slot.itemData.Use();
+                slot.itemData.Use(_player);
             });
         });
 
@@ -73,7 +72,6 @@ public class InventoryUI : MonoBehaviour
         Debug.Log(slot);
     }
 
-
     void OnDestroy()
     {
         if (_player?.Inventory != null)
@@ -82,21 +80,15 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    void ToggleInventory() 
-    {
-        if(_active) {
-            _root.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-        }
-        else {
-            _root.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
-        }
+    public void ToggleInventory() {
+        _root.style.display = _active ? new StyleEnum<DisplayStyle>(DisplayStyle.None) : new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
         _active = !_active;
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Tab)) {
-            ToggleInventory();
-        }
+        // if(Input.GetKeyDown(KeyCode.B)) {
+        //     ToggleInventory();
+        // }
     }
 }

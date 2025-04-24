@@ -1,7 +1,6 @@
 
 using TMPro;
 using UnityEngine;
-
 public class Item : MonoBehaviour {
     public ItemDataSO data;
     public int quantity = 1; // default
@@ -9,8 +8,7 @@ public class Item : MonoBehaviour {
     public SpriteRenderer spriteRenderer;
     public TextMeshPro textQuantity;
 
-    void Awake() 
-    {
+    void Awake() {
         textQuantity = GetComponentInChildren<TextMeshPro>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
        

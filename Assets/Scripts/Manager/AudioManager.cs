@@ -36,8 +36,6 @@ public class AudioManager : MonoBehaviour
     }
 
 
-
-
     public void StopLoopingSFX()
     {
         if (sfxSource.isPlaying)

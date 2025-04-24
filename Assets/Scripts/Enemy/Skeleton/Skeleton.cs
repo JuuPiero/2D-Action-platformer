@@ -1,6 +1,7 @@
+using System.Collections;
 using UnityEngine;
 
-public class Skeleton : Enemy {
+public class Skeleton : Enemy, IKnockbackable {
     [field: SerializeField] public SkeletonDataSO Data { get; protected set; }
     public Animator Anim { get; protected set; }
     public StateMachine StateMachine { get; protected set; }
@@ -12,6 +13,7 @@ public class Skeleton : Enemy {
     public CooldownTimer attackTimer;
     public bool canChase;
     public bool canAttack;
+    public bool isKnockedBack;
 
     void Awake()
     {
@@ -31,12 +33,11 @@ public class Skeleton : Enemy {
         StateMachine.AddState(new SkeletonAttackState("Attack", this));
         StateMachine.AddState(new SkeletonIdleState("Idle", this));
         attackTimer.Start(Data.attackCooldownTime);
-        StateMachine.Initialize();
+        StateMachine.Initialize(StateMachine.GetState<SkeletonIdleState>());
     }
 
     protected override void Update() {
         base.Update();
-
         StateMachine.Update();
     }
 
@@ -59,8 +60,27 @@ public class Skeleton : Enemy {
     }
 
     public override void Damage(int damage) {
-        attackTimer.Start(1f);
+        Vector2 knockbackDir = (transform.position - _targetPlayer.transform.position).normalized;
+        ApplyKnockback(knockbackDir, Data.knockbackForce, 0.2f);
+        attackTimer.Start(Data.attackCooldownTime);
         base.Damage(damage);
     }
-   
+
+    public void ApplyKnockback(Vector2 direction, float force, float duration)
+    {
+        if (isKnockedBack) return;
+
+        isKnockedBack = true;
+        RB.velocity = Vector2.zero; // Reset trước khi áp lực mới
+        RB.AddForce(direction.normalized * force, ForceMode2D.Impulse);
+
+        StartCoroutine(KnockbackCoroutine(duration));
+    }
+
+    private IEnumerator KnockbackCoroutine(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        isKnockedBack = false;
+        RB.velocity = Vector2.zero;
+    }
 }

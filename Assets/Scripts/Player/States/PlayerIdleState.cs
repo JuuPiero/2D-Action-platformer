@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerIdleState : PlayerState
 {
-    public PlayerIdleState(string animationName, Player player) : base(animationName, player) {}
+    public PlayerIdleState(string animationBoolName, Player player) : base(animationBoolName, player) {}
 
     public override bool IsMatchingConditions()
     {
@@ -12,7 +12,7 @@ public class PlayerIdleState : PlayerState
 
 public class PlayerSwordIdleState : PlayerState
 {
-    public PlayerSwordIdleState(string animationName, Player player) : base(animationName, player) {}
+    public PlayerSwordIdleState(string animationBoolName, Player player) : base(animationBoolName, player) {}
 
     public override bool IsMatchingConditions()
     {

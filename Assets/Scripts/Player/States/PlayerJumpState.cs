@@ -12,7 +12,6 @@ public class PlayerJumpState : PlayerState
 
     public override void Enter() {
         // AudioManager.Instance.PlaySFX("PlayerJump");
-        // _player.Jump();
         VFXManager.Instance?.PlayEffect("JumpVFX", _player.groundCheck.position, 0.3f);
         base.Enter();
     }

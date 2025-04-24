@@ -60,9 +60,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "New action",
+                    "name": "Push",
                     "type": "Button",
-                    "id": "f5ea7881-65b4-4d9b-a46c-b2e0917ec348",
+                    "id": "601a4611-13b8-4d15-a9bd-39d3bd8f6f1c",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -303,12 +303,40 @@
                 },
                 {
                     "name": "",
-                    "id": "d62c79ba-370b-4444-988f-28f93366a695",
-                    "path": "",
+                    "id": "9cab7271-2d75-4a30-9b2b-48752e965726",
+                    "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
+                    "action": "Push",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "UI",
+            "id": "38817b05-7bb5-4c7f-a057-40ec92aa22b1",
+            "actions": [
+                {
+                    "name": "ToggleInventory",
+                    "type": "Button",
+                    "id": "88252f99-8819-4bb1-82ab-c8d79cfa5ce2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "76e1f595-72ff-4aa9-a7b8-8a3e10137423",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleInventory",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

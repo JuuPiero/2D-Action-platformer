@@ -34,6 +34,5 @@ public class PlayerStunState : PlayerState
         }
         _sr.color = Color.white; // Trả về màu ban đầu
         _player.isStuning = false;
-
     }
 }

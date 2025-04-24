@@ -22,19 +22,21 @@ public class PlayerInputHandler : MonoBehaviour
     public bool IsShieldPressed => _isShieldPressed;
     public bool IsShieldRelease => _isShieldRelease;
 
-
     private float _attackPressTime;
     private bool _isHoldingAttack;
     private bool _isAttackPressed;
-    private int _attackComboIndex = 0;
     public bool IsHoldingAttack => _isHoldingAttack;
     public bool IsAttackPressed => _isAttackPressed;
-    public int AttackComboIndex => _attackComboIndex;
-
 
     private bool _jumpPressed;
     public bool JumpPressed => _jumpPressed;
-    public bool JumpReleased { get; private set; }
+
+    private bool _pushPressed;
+    public bool PushPressed => _pushPressed;
+
+    // public bool JumpReleased { get; private set; }
+    private bool _isInventoryPressed;
+    public bool IsInventoryPressed => _isInventoryPressed;
 
     private void Awake()
     {
@@ -44,6 +46,7 @@ public class PlayerInputHandler : MonoBehaviour
     private void OnEnable()
     {
         _controls.GamePlay.Enable();
+        _controls.UI.Enable();
 
         _controls.GamePlay.Move.performed += ctx => _inputDirection = ctx.ReadValue<Vector2>();
         _controls.GamePlay.Move.canceled += ctx => _inputDirection = Vector2.zero;
@@ -51,8 +54,8 @@ public class PlayerInputHandler : MonoBehaviour
         _controls.GamePlay.Shield.started += ctx => StartShield();
         _controls.GamePlay.Shield.canceled += ctx => ReleaseShield();
 
-        _controls.GamePlay.Jump.started += ctx => _jumpPressed = true;
-        _controls.GamePlay.Jump.canceled += ctx => _jumpPressed = false;
+        // _controls.GamePlay.Jump.started += ctx => _jumpPressed = true;
+        // _controls.GamePlay.Jump.canceled += ctx => _jumpPressed = false;
 
         _controls.GamePlay.Dash.started += ctx => _isDashPressed = true;
         _controls.GamePlay.Dash.canceled += ctx => _isDashPressed = false;
@@ -63,11 +66,19 @@ public class PlayerInputHandler : MonoBehaviour
         _controls.GamePlay.Attack.started += ctx => StartAttack();
         _controls.GamePlay.Attack.canceled += ctx => ReleaseAttack();
 
+
+        _controls.GamePlay.Push.started += ctx => _pushPressed = true;
+        _controls.GamePlay.Push.canceled += ctx => _pushPressed = false;
+
+
+        // _controls.UI.ToggleInventory.started += ctx => _isInventoryPressed = true;
+        // _controls.UI.ToggleInventory.canceled += ctx => _isInventoryPressed = false;
     }
 
     private void OnDisable()
     {
         _controls.GamePlay.Disable();
+        _controls.UI.Disable();
     }
     private void StartAttack() {
         _attackPressTime = Time.time;
@@ -82,6 +93,7 @@ public class PlayerInputHandler : MonoBehaviour
             _isHoldingAttack = false;
         }
         _isAttackPressed = false;
+        _isHoldingAttack = false;
     }
 
     private void StartShield() {
@@ -112,6 +124,18 @@ public class PlayerInputHandler : MonoBehaviour
         _isHoldingShield = false;
     }
 
+     private void ToggleInventory()
+    {
+        // bool isActive = _inventoryPanel.activeSelf;
+        // _inventoryPanel.SetActive(!isActive);
+
+        // // Chuyển đổi input map
+        // if (!isActive)
+        //     _inputHandler.SwitchToUIInput();
+        // else
+        //     _inputHandler.SwitchToGameplayInput();
+    }
+
     void Update()
     {
         if (_isShieldPressed && (Time.time - _shieldPressTime) >= HOLD_THRESHOLD)
@@ -125,5 +149,12 @@ public class PlayerInputHandler : MonoBehaviour
         }
 
         _jumpPressed = _controls.GamePlay.Jump.WasPressedThisFrame();
+        _isInventoryPressed = _controls.UI.ToggleInventory.WasPressedThisFrame();
+
+       if (IsInventoryPressed)
+        {
+            // ToggleInventory();
+            FindAnyObjectByType<InventoryUI>().ToggleInventory();
+        }
     }
 }

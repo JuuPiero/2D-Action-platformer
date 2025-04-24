@@ -9,15 +9,11 @@ public class PlayerLedgeGrabState : PlayerState
 
     public override bool IsMatchingConditions()
     {
-        return _player.canLedgeGrab && !_player.IsGrounded;
+        return !_player.IsGrounded && _player.canLedgeGrab && Mathf.Round(_player.RB.velocity.y) == 0f && (StateMachine.CurrentState is PlayerFallState || StateMachine.CurrentState is PlayerJumpState);
     }
 
     public override void Enter() {
+        _player.jumpCount = 0;
         base.Enter();
-        CanExit = false;
-    }
-    public override void FixedUpdate() {
-        base.FixedUpdate();
-        _player.RB.velocity = Vector2.zero;
     }
 }

@@ -29,7 +29,7 @@ public class PlayerDataSO : ScriptableObject
 
     [Header("Dash")]
     public float dashSpeed  = 20f;
-    public float dashCooldownTime = 1f;
+    public float dashCooldownTime = 0.8f;
 
 
     [Header("Attack")]

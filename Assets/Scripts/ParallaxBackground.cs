@@ -10,19 +10,21 @@ public class ParallaxBackground : MonoBehaviour
     private void Start()
     {
         startPostion = transform.position.x;
+        backgroundWidth = GetComponent<SpriteRenderer>().bounds.size.x;
+
         mainCamera = Camera.main;
 
-        backgroundWidth = GetComponent<SpriteRenderer>().bounds.size.x;
     }
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
-        float distance = mainCamera.transform.position.x * speed;
         float movement = mainCamera.transform.position.x * (1 - speed);
 
-        transform.position = new Vector3(startPostion + distance, transform.position.y , transform.position.z);
+        float distance = mainCamera.transform.position.x * speed;
 
-        if(movement > startPostion + backgroundWidth)
+        transform.position = new Vector3(startPostion + distance, transform.position.y , transform.position.z);
+        
+        if(movement >= startPostion + backgroundWidth)
         {
             startPostion += backgroundWidth;
         }  

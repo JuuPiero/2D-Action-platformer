@@ -9,7 +9,7 @@ public class Player : MonoBehaviour, IDamageable
     public Animator Anim { get; private set; }
 
     [field: SerializeField] public PlayerDataSO Data { get; private set; }
-    [field: SerializeField] public StateMachine StateMachine { get; private set; }
+    public StateMachine StateMachine { get; private set; }
 
     public Transform groundCheck;
     public Transform wallCheck;
@@ -17,6 +17,14 @@ public class Player : MonoBehaviour, IDamageable
 
     [field: SerializeField] public Inventory Inventory { get; private set; }
 
+    public Dictionary<EquipmentSlot, ItemDataSO> equippedItems = new();
+
+    public void Equip(EquipmentDataSO equipment)
+    {
+        equippedItems[equipment.slot] = equipment;
+        Debug.Log($"{this.name} equipped {equipment.itemName} in {equipment.slot}");
+        Debug.Log(equippedItems);
+    }
 
     [Header("Status")]
     public bool isFacingRight = true;
@@ -33,7 +41,7 @@ public class Player : MonoBehaviour, IDamageable
     public float CurrentStamina { get ; set; }
     public float CurrentMana { get ; set; }
 
-    public bool CanPush {get; set;} = false;
+    [field: SerializeField] public bool CanPush { get; set; } = false;
     
     public bool canLedgeGrab = false;
 
@@ -53,6 +61,7 @@ public class Player : MonoBehaviour, IDamageable
     public int jumpCount = 0;
     public GameObject afterimagePrefab;
 
+
     void Awake()
     {
         InputHandler = GetComponentInChildren<PlayerInputHandler>();
@@ -65,57 +74,58 @@ public class Player : MonoBehaviour, IDamageable
     void Start()
     {
         //SORTING STATE BY PRIORYTY
-        StateMachine.AddState(new PlayerSwordFallState("PlayerSwordFall", this));
+        StateMachine.AddState(new PlayerIdleState("PlayerIdle", this));
+        StateMachine.AddState(new PlayerSwordIdleState("PlayerSwordIdle", this));
+        StateMachine.AddState(new PlayerWalkState("PlayerWalk", this));
+        StateMachine.AddState(new PlayerSwordWalkState("PlayerSwordWalk", this));
         StateMachine.AddState(new PlayerFallState("PlayerFall", this));
-        StateMachine.AddState(new PlayerStunState("PlayerStun", this));
+        StateMachine.AddState(new PlayerSwordFallState("PlayerSwordFall", this));
+        StateMachine.AddState(new PlayerLandState("PlayerLand", this));
+        StateMachine.AddState(new PlayerSwordLandState("PlayerSwordLand", this));
+
         StateMachine.AddState(new PlayerDashState("PlayerDash", this));
-        StateMachine.AddState(new PlayerDieState("PlayerDie", this));
-        StateMachine.AddState(new PlayerSwordJumpState("PlayerSwordJump", this));
-        StateMachine.AddState(new PlayerJumpState("PlayerJump", this));
-        StateMachine.AddState(new PlayerSpellCastingState("PlayerSpellCasting", this));
-        StateMachine.AddState(new PlayerShieldIdleState("PlayerShieldIdle", this));
+        StateMachine.AddState(new PlayerLedgeGrabState("PlayerLedgeGrab", this));
+
         StateMachine.AddState(new PlayerShieldUpState("PlayerShieldUp", this));
+        StateMachine.AddState(new PlayerShieldIdleState("PlayerShieldIdle", this));
         StateMachine.AddState(new PlayerShieldBashState("PlayerShieldBash", this));
-        //StateMachine.AddState(new PlayerLedgeGrabState("PlayerLedgeGrab", this));
+
+        StateMachine.AddState(new PlayerPushState("PlayerPush", this));
+        StateMachine.AddState(new PlayerDieState("PlayerDie", this));
+        StateMachine.AddState(new PlayerJumpState("PlayerJump", this));
+        StateMachine.AddState(new PlayerSwordJumpState("PlayerSwordJump", this));
+        StateMachine.AddState(new PlayerSpellCastingState("PlayerSpellCasting", this));
+      
+       
         StateMachine.AddState(new PlayerLightAttackState("PlayerAttack", this));
         StateMachine.AddState(new PlayerHeavyAttackState("PlayerHeavyAttack", this));
-        StateMachine.AddState(new PlayerWallSlideState("PlayerWallSlide", this));
-        StateMachine.AddState(new PlayerSwordLandState("PlayerSwordLand", this));
-        StateMachine.AddState(new PlayerLandState("PlayerLand", this));
-        StateMachine.AddState(new PlayerSwordWalkState("PlayerSwordWalk", this));
-        StateMachine.AddState(new PlayerWalkState("PlayerWalk", this));
-        StateMachine.AddState(new PlayerSwordIdleState("PlayerSwordIdle", this));
-        StateMachine.AddState(new PlayerIdleState("PlayerIdle", this));
+        // StateMachine.AddState(new PlayerWallSlideState("PlayerWallSlide", this));
+        StateMachine.AddState(new PlayerStunState("PlayerStun", this));
 
-        StateMachine.Initialize();
 
+        StateMachine.Initialize(StateMachine.GetState<PlayerFallState>());
 
         CurrentHealth = Data.maxHealthPoint;
         CurrentStamina = Data.maxStamina;
         CurrentMana = Data.maxMana;
     }
   
-
     void Update() {
         CheckFlip();
         CheckCollision();
-        canLedgeGrab = IsTouchingWall && !IsTouchingLedge;
 
-        if(canLedgeGrab) {
-            
-            //RB.velocity = Vector2.zero;
-            //transform.position = new Vector2(transform.position.x + 0.8f, transform.position.y + 1f);
-            //canLedgeGrab = false;
+        
+        if (_isGrounded && RB.velocity.y <= 0) {
+            jumpCount = 0;
         }
 
         if (InputHandler.JumpPressed) {
             Jump();
         }
 
-        if (IsGrounded && !InputHandler.JumpPressed) jumpCount = 0; // Reset khi chạm đất
-
+        
         isAttacking = !combatCooldown.IsReady;
-        if(!isAttacking) PlayerLightAttackState.attackIndex = 1;
+        if(!isAttacking) PlayerLightAttackState.AttackIndex = 1;
    
         
         attackCooldown.Update(Time.deltaTime);
@@ -131,12 +141,12 @@ public class Player : MonoBehaviour, IDamageable
         _isGrounded = Physics2D.OverlapCircle(groundCheck.position, Data.groundCheckRadius, Data.whatIsGround);
         _isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, Data.wallCheckDistance * transform.localScale.x, Data.whatIsGround);
         _isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, Data.wallCheckDistance * transform.localScale.x, Data.whatIsGround);
+        canLedgeGrab = IsTouchingWall && !IsTouchingLedge;
     }
 
  
-    void FixedUpdate()
-    {
-        if(StateMachine.CurrentState is not PlayerDashState) {
+    void FixedUpdate() {
+        if(!StateMachine.CurrentIs<PlayerDashState>() && !StateMachine.CurrentIs<PlayerLedgeGrabState>()) {
             RB.velocity = new Vector2(Data.speed * InputHandler.Direction.x, RB.velocity.y);
         }
         StateMachine.FixedUpdate();
@@ -180,18 +190,6 @@ public class Player : MonoBehaviour, IDamageable
         isTriggerShieldBash = false;
     }
     
-    public void Knockback(Vector2 direction) {
-        StartCoroutine(ApplyKnockback(direction, Data.knockbackForce));
-    }
-    private IEnumerator ApplyKnockback(Vector2 direction, float force) {
-        float knockbackTime = 0.1f;
-        float timer = 0;
-        while (timer < knockbackTime) {
-            transform.Translate(direction * force * Time.deltaTime);
-            timer += Time.deltaTime;
-            yield return null;
-        }
-    }
 
     public void Damage(int damage) {
         
@@ -201,10 +199,9 @@ public class Player : MonoBehaviour, IDamageable
             StartCoroutine(ResetShieldBashTrigger());
             return;
         }
-
+        
         CurrentHealth -= damage;
         isStuning = true;
-        // stunTimer.Start(Data.stunTime);
 
         if(CurrentHealth <= 0) {
             Die();

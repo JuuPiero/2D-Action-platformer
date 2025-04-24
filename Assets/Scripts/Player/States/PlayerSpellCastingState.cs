@@ -18,7 +18,7 @@ public class PlayerSpellCastingState : PlayerState
         _player.transform.Find("Aura").gameObject.SetActive(true);
         CanExit = false;
         base.Enter();
-        AudioManager.Instance?.PlaySFX("PlayerAttack");
+        // AudioManager.Instance?.PlaySFX("PlayerAttack");
     }
 
     public void SpellCast() 

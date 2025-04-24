@@ -1,24 +1,24 @@
 
 public class PlayerFallState : PlayerState 
 {
-    public PlayerFallState(string animationName, Player player) : base(animationName, player)
+    public PlayerFallState(string animationBoolName, Player player) : base(animationBoolName, player)
     {
     }
 
     public override bool IsMatchingConditions()
     {
-        return !_player.IsGrounded && _player.RB.velocity.y < 0f;
+        return !_player.IsGrounded && _player.RB.velocity.y < 0f && !_player.canLedgeGrab;
     }
 
 }
 
-public class PlayerSwordFallState : PlayerState 
+public class PlayerSwordFallState : PlayerFallState 
 {
-    public PlayerSwordFallState(string animationName, Player player) : base(animationName, player)
+    public PlayerSwordFallState(string animationBoolName, Player player) : base(animationBoolName, player)
     {
     }
     public override bool IsMatchingConditions()
     {
-        return !_player.IsGrounded && _player.RB.velocity.y <= 0f && _player.isAttacking; 
+        return base.IsMatchingConditions() && _player.isAttacking; 
     }
 }

@@ -16,7 +16,7 @@ public class PlayerHeavyAttackState : PlayerState  {
     public override void Enter() {
         _player.GetComponentInChildren<PlayerAnimation>().OnAttack += Attack;
         base.Enter();
-        AudioManager.Instance?.PlaySFX("PlayerAttack");
+        // AudioManager.Instance?.PlaySFX("PlayerAttack");
     }
 
     public override void Update()
@@ -57,12 +57,13 @@ public class PlayerHeavyAttackState : PlayerState  {
 
 
 public class PlayerLightAttackState : PlayerState {
-    public static byte attackIndex;
-
+    public static byte AttackIndex;
+    private float _speed;
     private readonly string AnimationBaseName;
     public PlayerLightAttackState(string animationName, Player player) : base(animationName, player) {
         AnimationBaseName = animationName;
-        attackIndex = 1;
+        AttackIndex = 1;
+        _speed = _player.Data.speed;
     }
 
     public override bool IsMatchingConditions() {
@@ -73,32 +74,34 @@ public class PlayerLightAttackState : PlayerState {
         _player.combatCooldown.Start(_player.Data.combatTime);
         _player.GetComponentInChildren<PlayerAnimation>().OnAttack += Attack;
         CanExit = false;
-        if(attackIndex > 3) {
-            attackIndex = 1;
+        _player.Data.speed /= 2f;
+        if(AttackIndex > 3) {
+            AttackIndex = 1;
         }
-        AnimationBoolName = AnimationBaseName + "_" + attackIndex;
+        AnimationBoolName = AnimationBaseName + "_" + AttackIndex;
         AudioManager.Instance?.PlaySFX(AnimationBoolName);
         base.Enter();
-        
         // AudioManager.Instance?.PlaySFX("PlayerAttack");
-
     }
 
 
     public override void Exit() {
         base.Exit();
-        attackIndex++;
+        AttackIndex++;
         _player.attackCooldown.Start(_player.Data.attackCooldownTime);
+        _player.Data.speed = _speed;
     }
 
     void Attack() {
         Collider2D[] hitEnemies = DetectEnemies();
         var hitboxes = _player.GetComponent<PlayerHitboxManager>().hitboxes;
+        // if(hitEnemies.Length > 0) {
+        //     // TimeManager.Instance?.SlowDownTime(0.2f, 0.3f);
+        // }
         // VFXManager.Instance.PlayEffect("Slash_1", hitboxes[0].transform.position, 0.2f);
-        foreach (var enemy in hitEnemies)
-        {
+        foreach (var enemy in hitEnemies) {
             VFXManager.Instance?.PlayEffect("HitVFX", hitboxes[0].position, 0.3f);
-            AudioManager.Instance?.PlaySFX("SwordSFX_" + attackIndex);
+            AudioManager.Instance?.PlaySFX("SwordSFX_" + AttackIndex);
             enemy.GetComponent<IDamageable>()?.Damage(20);
             Debug.Log(enemy.gameObject.name);
         }

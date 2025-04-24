@@ -16,7 +16,7 @@ public class VFXManager : MonoBehaviour
         }
     }
 
-    public void PlayEffect(string effectName, Vector3 position, float lifetime = 2f)
+    public void PlayEffect(string effectName, Vector3 position, float lifetime = 0.2f)
     {
         if (vfxDict.TryGetValue(effectName, out GameObject prefab))
         {

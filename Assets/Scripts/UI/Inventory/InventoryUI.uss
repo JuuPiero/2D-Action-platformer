@@ -1,0 +1,61 @@
+:root {
+    --primary-color: rgb(36, 18, 6);
+    --secondary-color: rgb(235, 173, 68);
+    margin: 5% 10%;
+    color: var(--secondary-color);
+}
+
+.inventory-container {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(36, 18, 6, 0.6);
+    flex-direction: row;
+}
+
+.tab-container {
+    width: 15%;
+    background-color: var(--primary-color);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 10px;
+    border-width: 2px;
+    border-color: var(--secondary-color);
+}
+
+.tab-btn {
+    height: 18%;
+    width: 80%;
+    background-color: transparent;
+    border-width: 2px;
+    border-radius: 100px;
+    border-color: var(--secondary-color);
+    background-image: url("project://database/Assets/Sprites/LabIcons.png?fileID=-46163572&guid=60c2509402145114eae03efb0aa4bca5&type=3#LabIcons_3");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.inventory-centre {
+    width: 60%;
+    padding: 10px 20px;
+}
+
+.inventory-text {
+    height: 12%;
+}
+
+.list-item-container {
+    height: 75%;
+    background-color: rgba(36, 18, 6, 0.8);
+}
+
+.list-item {
+    flex-direction: row;
+    flex-wrap: wrap;
+    /* min-height: 1000px; */
+    /* height: 100%; */
+}
+
+.slot-item {
+   height: 10%;
+   width: 20%;
+}

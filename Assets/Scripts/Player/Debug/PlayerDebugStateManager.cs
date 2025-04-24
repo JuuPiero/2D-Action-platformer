@@ -1,7 +1,6 @@
-using UnityEngine;
 using TMPro;
-public class PlayerDebugStateManager : MonoBehaviour
-{
+using UnityEngine;
+public class PlayerDebugStateManager : MonoBehaviour {
     [SerializeField] private Player _player;
     [SerializeField] private TextMeshPro _stateText;
     [SerializeField] private TextMeshPro _prevStateText;

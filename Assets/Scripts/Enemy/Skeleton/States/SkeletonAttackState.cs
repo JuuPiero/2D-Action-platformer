@@ -36,9 +36,9 @@ public class SkeletonAttackState : SkeletonState {
         foreach (var player in playerDetect) {
             VFXManager.Instance?.PlayEffect("HitVFX", _skeleton.attackPoint.position, 0.3f);
             player.GetComponent<IDamageable>().Damage(_skeleton.Data.basicAttackDamage);
-            player.GetComponent<Player>().Knockback((player.transform.position - _skeleton.transform.position).normalized);
+            //player.GetComponent<Player>().Knockback((player.transform.position - _skeleton.transform.position).normalized);
         }
-        _skeleton.attackTimer.Start(_skeleton.Data.attackCooldownTime);
+        _skeleton.attackTimer.Start((float)attackIndex);
         _skeleton.GetComponentInChildren<EnemyAnimation>().OnAnimationTrigger -= Attack;
     }
 }

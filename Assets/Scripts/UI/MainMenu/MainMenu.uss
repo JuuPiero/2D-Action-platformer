@@ -1,0 +1,21 @@
+.menu-container {
+    background-image: url("project://database/Assets/Sprites/Summer4.png?fileID=21300000&guid=163c76dad7e793c479dd7b3b14af3d78&type=3#Summer4");
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    
+
+}
+.game-title {
+    /* text-outline: 6px rgb(144, 31, 32); */
+}
+.btn {
+    color: rgb(0, 0, 0);
+    width: 40%;
+    height: 10%;
+    background-color: rgb(255, 255, 255);
+    border-width: 2px;
+    border-color: rgb(0, 0, 0);
+    border-radius: 5px;
+    margin-bottom: 10px;
+}

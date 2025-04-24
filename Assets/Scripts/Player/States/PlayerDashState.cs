@@ -48,7 +48,7 @@ public class PlayerDashState : PlayerState
     void StopDash() {
         _player.RB.velocity = Vector2.zero;
         CanExit = true;
-        _player.dashTimer.Start(0.5f);
+        _player.dashTimer.Start(_player.Data.dashCooldownTime);
     }
 
     IEnumerator CreateAfterImages() {
@@ -62,7 +62,7 @@ public class PlayerDashState : PlayerState
                     new Color(1f, 1f, 1f, 0.5f) // Màu trắng, Alpha = 0.5
                 );
             }
-            yield return new WaitForSeconds(0.005f); // Tạo 1 afterimage mỗi 0.025s
+            yield return new WaitForSeconds(0.005f); // Tạo 1 afterimage mỗi 0.005s
         }
     }
 

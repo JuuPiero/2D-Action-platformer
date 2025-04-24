@@ -1,6 +1,9 @@
 using UnityEngine;
+public enum EquipmentSlot { Head, Chest, Legs, Weapon, Ring, Accessory }
 
 public abstract class ItemDataSO : ScriptableObject {
+    public enum ItemType { Equipment, Consumable }
+
     public ItemType itemType;
     public string itemName;
     public Sprite icon;
@@ -8,15 +11,6 @@ public abstract class ItemDataSO : ScriptableObject {
 
     [TextArea] public string description;
 
-    public abstract void Use();
+    public abstract void Use(Player player);
 
-    public enum ItemType 
-    {
-        None,
-        Accessories,
-        Armor,
-        Consumable,
-        // QuestItem,
-        // CraftingMaterial,
-    }
 }

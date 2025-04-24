@@ -1,11 +1,10 @@
 using UnityEngine;
-
 public class Enemy : MonoBehaviour, IDamageable {
     [SerializeField] public LayerMask playerLayer;
     [SerializeField] protected Player _targetPlayer;
+    //[SerializeField] protected CinemachineImpulseSource impulseSource;
 
     public Transform attackPoint;
-
 
     [field: SerializeField] public int CurrentHealth { get; set; } = 100;
     [field: SerializeField] public Vector2 Direction { get; set; }
@@ -38,20 +37,18 @@ public class Enemy : MonoBehaviour, IDamageable {
         }
     }
    
-
     public Vector2 GetDirectionToPlayer() {
         var v = _targetPlayer.transform.position - transform.position;
         v.y = 0f;
         return v.normalized;
     }
 
-    public virtual void Damage(int damage)
-    {
+    public virtual void Damage(int damage) {
         CurrentHealth -= damage;
         if(CurrentHealth <= 0) {
             Die();
         }
-        GetComponent<Rigidbody2D>().velocity = new Vector2(-transform.localScale.x * 2f, 2f);
+        //GetComponent<Rigidbody2D>().velocity = new Vector2(-transform.localScale.x * 2f, 2f);
     }
     
     public virtual void Die() 

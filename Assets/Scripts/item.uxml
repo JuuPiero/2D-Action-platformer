@@ -1,6 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
-    <ui:VisualElement name="item" class="item">
-        <ui:Image name="itemIcon" class="item-icon" />
-        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="item-quantity" name="itemQuantity" />
-    </ui:VisualElement>
-</ui:UXML>
