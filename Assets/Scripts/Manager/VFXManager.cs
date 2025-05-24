@@ -1,15 +1,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VFXManager : MonoBehaviour
+public class VFXManager : Singleton<VFXManager>
 {
-    public static VFXManager Instance;
-    public List<GameObject> vfxPrefabs;
+    // public static VFXManager Instance;
+    public List<GameObject> vfxPrefabs = new();
     private Dictionary<string, GameObject> vfxDict = new Dictionary<string, GameObject>();
 
-    private void Awake()
+    // private void Awake()
+    // {
+    //     if (Instance == null)
+    //     {
+    //         Instance = this;
+    //         DontDestroyOnLoad(gameObject);
+    //     }
+    //     else
+    //     {
+    //         Destroy(gameObject);
+    //     }
+    // }
+    void Start()
     {
-        if (Instance == null) Instance = this;
         foreach (var vfx in vfxPrefabs)
         {
             vfxDict[vfx.name] = vfx;
@@ -25,7 +36,6 @@ public class VFXManager : MonoBehaviour
         }
     }
 
-    
 
     public GameObject InstantiateEffect(string effectName, Vector3 position)
     {

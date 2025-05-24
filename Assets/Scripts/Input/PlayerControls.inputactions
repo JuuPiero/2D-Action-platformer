@@ -60,7 +60,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Push",
+                    "name": "Interact",
                     "type": "Button",
                     "id": "601a4611-13b8-4d15-a9bd-39d3bd8f6f1c",
                     "expectedControlType": "Button",
@@ -304,11 +304,11 @@
                 {
                     "name": "",
                     "id": "9cab7271-2d75-4a30-9b2b-48752e965726",
-                    "path": "<Keyboard>/leftShift",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Push",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

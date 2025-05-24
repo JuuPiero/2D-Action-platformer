@@ -13,6 +13,7 @@ public class TimeManager : MonoBehaviour
     }
     public void SlowDownTime(float slowFactor, float duration)
     {
+        
         Time.timeScale = slowFactor;  // Giảm tốc độ thời gian
         Time.fixedDeltaTime = 0.02f * Time.timeScale; // Điều chỉnh physics theo timeScale
         StartCoroutine(ResetTime(duration));

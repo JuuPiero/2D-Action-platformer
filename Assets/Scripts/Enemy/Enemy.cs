@@ -2,11 +2,12 @@ using UnityEngine;
 public class Enemy : MonoBehaviour, IDamageable {
     [SerializeField] public LayerMask playerLayer;
     [SerializeField] protected Player _targetPlayer;
+    
     //[SerializeField] protected CinemachineImpulseSource impulseSource;
 
     public Transform attackPoint;
 
-    [field: SerializeField] public int CurrentHealth { get; set; } = 100;
+    [field: SerializeField] public float CurrentHealth { get; set; } = 100f;
     [field: SerializeField] public Vector2 Direction { get; set; }
     public bool IsFacingRight { get; set; }
 
@@ -43,7 +44,7 @@ public class Enemy : MonoBehaviour, IDamageable {
         return v.normalized;
     }
 
-    public virtual void Damage(int damage) {
+    public virtual void Damage(float damage) {
         CurrentHealth -= damage;
         if(CurrentHealth <= 0) {
             Die();
@@ -53,6 +54,7 @@ public class Enemy : MonoBehaviour, IDamageable {
     
     public virtual void Die() 
     {
+        ItemManager.Instance?.SpawnItem(gameObject.transform.position);
         Destroy(gameObject);
     }
 }

@@ -13,7 +13,7 @@ public class AfterImage : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
-    public void Setup(Sprite sprite, Vector3 position, Vector3 localScale, Color baseColor)
+    public void Display(Sprite sprite, Vector3 position, Vector3 localScale, Color baseColor)
     {
         sr.sprite = sprite;
         transform.position = position;

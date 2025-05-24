@@ -1,21 +1,46 @@
-.menu-container {
+:root {
     background-image: url("project://database/Assets/Sprites/Summer4.png?fileID=21300000&guid=163c76dad7e793c479dd7b3b14af3d78&type=3#Summer4");
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    
+    padding-top: 20px;
+   
+}
 
+.menu-container {
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    padding: 10px 10px;
+    background-color: rgba(31, 28, 44, 0.7);
+    border-radius: 10px;
 }
-.game-title {
-    /* text-outline: 6px rgb(144, 31, 32); */
-}
-.btn {
-    color: rgb(0, 0, 0);
-    width: 40%;
-    height: 10%;
-    background-color: rgb(255, 255, 255);
+
+.menu-btn {
+    padding: 6px 30px;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
     border-width: 2px;
-    border-color: rgb(0, 0, 0);
-    border-radius: 5px;
-    margin-bottom: 10px;
+    border-color: #FFFFFF;
+    background-color: #1f1c2c;
+    font-size: 10px;
+    max-height: 45px;
+    margin-bottom: 6px;
+    -unity-font-style: bold;
+  
+}
+.menu-btn:hover {
+    background-color: #FFFFFF;
+    color: #1f1c2c;
+    scale: 1.1;
+    font-size: 11px;
+    /* box-shadow: 0 0 15px #fff; */
+}
+
+.title {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 30px;
+    text-shadow: 2px 5px 20px #000;
+    /* -unity-font-style: bold and italic; */
+    -unity-font-style: bold; 
+    -unity-text-align: middle-center;
 }

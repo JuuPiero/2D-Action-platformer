@@ -4,22 +4,23 @@ using System.Collections.Generic;
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
-    // public AudioSource musicSource;
+    public AudioSource musicSource;
     public AudioSource sfxSource;
-    public List<AudioClip> sfxClips = new List<AudioClip>();
-    private Dictionary<string, AudioClip> sfxDict = new Dictionary<string, AudioClip>();
+    public AudioSource soundSource;
+
+    public List<AudioClip> sounds = new();
+    private Dictionary<string, AudioClip> sfxDict = new();
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            //DontDestroyOnLoad(gameObject);
-
-            foreach (var clip in sfxClips)
+            foreach (var clip in sounds)
             {
                 sfxDict[clip.name] = clip;
             }
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -29,9 +30,18 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySFX(string name)
     {
+        // if (sfxSource.isPlaying) return;
         if (sfxDict.TryGetValue(name, out AudioClip clip))
         {
             sfxSource.PlayOneShot(clip);
+        }
+    }
+
+    public void PlaySound(string name)
+    {
+        if (sfxDict.TryGetValue(name, out AudioClip clip))
+        {
+            soundSource.PlayOneShot(clip);
         }
     }
 

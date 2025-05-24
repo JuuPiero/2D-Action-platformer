@@ -10,7 +10,7 @@ public class PlayerHeavyAttackState : PlayerState  {
 
     public override bool IsMatchingConditions()
     {
-        return _player.attackCooldown.IsReady && _player.InputHandler.IsHoldingAttack && _player.CurrentStamina > 0f; // ADD STAMINA CONDITION
+        return _player.attackCooldown.IsReady && _player.InputHandler.IsHoldingAttack && _player.Resource.CurrentStamina > 0f;
     }
 
     public override void Enter() {
@@ -22,8 +22,9 @@ public class PlayerHeavyAttackState : PlayerState  {
     public override void Update()
     {
         base.Update();
-        _player.CurrentStamina -= Time.deltaTime;
-        if(_player.CurrentStamina < 0f) _player.CurrentStamina = 0f;
+        // _player.Re CurrentStamina -= Time.deltaTime;
+        // if(_player.CurrentStamina < 0f) _player.CurrentStamina = 0f;
+        
     }
 
     public override void FixedUpdate()
@@ -34,19 +35,25 @@ public class PlayerHeavyAttackState : PlayerState  {
 
     public override void Exit() {
         base.Exit();
+        
         _player.attackCooldown.Start(_player.Data.attackCooldownTime);
         _player.GetComponentInChildren<PlayerAnimation>().OnAttack -= Attack;
     }
 
-    void Attack() {
+    void Attack()
+    {
+        // if(!AudioManager.Instance.sfxSource.isPlaying)
+        //     AudioManager.Instance?.PlaySFX("SwordSwoosh");
         Collider2D[] hitEnemies = DetectEnemies();
         foreach (var enemy in hitEnemies)
         {
             VFXManager.Instance?.PlayEffect("HitVFX", enemy.transform.position, 0.3f);
             AudioManager.Instance?.PlaySFX("SwordSFX_" + 4);
             enemy.GetComponent<IDamageable>()?.Damage(20);
+            CameraShake.Instance?.Shake(1.2f, 0.3f);
             Debug.Log(enemy.gameObject.name);
         }
+       
     }
 
     public Collider2D[] DetectEnemies() {
@@ -74,12 +81,13 @@ public class PlayerLightAttackState : PlayerState {
         _player.combatCooldown.Start(_player.Data.combatTime);
         _player.GetComponentInChildren<PlayerAnimation>().OnAttack += Attack;
         CanExit = false;
-        _player.Data.speed /= 2f;
+        // _player.Data.speed /= 2f;
+        _player.RB.velocity = new Vector2(1f, 0f);
         if(AttackIndex > 3) {
             AttackIndex = 1;
         }
         AnimationBoolName = AnimationBaseName + "_" + AttackIndex;
-        AudioManager.Instance?.PlaySFX(AnimationBoolName);
+        AudioManager.Instance?.PlaySound(AnimationBoolName);
         base.Enter();
         // AudioManager.Instance?.PlaySFX("PlayerAttack");
     }
@@ -89,20 +97,17 @@ public class PlayerLightAttackState : PlayerState {
         base.Exit();
         AttackIndex++;
         _player.attackCooldown.Start(_player.Data.attackCooldownTime);
-        _player.Data.speed = _speed;
+        // _player.Data.speed = _speed;
     }
 
     void Attack() {
         Collider2D[] hitEnemies = DetectEnemies();
         var hitboxes = _player.GetComponent<PlayerHitboxManager>().hitboxes;
-        // if(hitEnemies.Length > 0) {
-        //     // TimeManager.Instance?.SlowDownTime(0.2f, 0.3f);
-        // }
-        // VFXManager.Instance.PlayEffect("Slash_1", hitboxes[0].transform.position, 0.2f);
         foreach (var enemy in hitEnemies) {
             VFXManager.Instance?.PlayEffect("HitVFX", hitboxes[0].position, 0.3f);
             AudioManager.Instance?.PlaySFX("SwordSFX_" + AttackIndex);
             enemy.GetComponent<IDamageable>()?.Damage(20);
+            CameraShake.Instance?.Shake(1.5f, 0.3f);
             Debug.Log(enemy.gameObject.name);
         }
         _player.GetComponentInChildren<PlayerAnimation>().OnAttack -= Attack;

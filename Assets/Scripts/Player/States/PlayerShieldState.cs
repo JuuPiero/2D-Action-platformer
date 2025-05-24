@@ -54,7 +54,9 @@ public class PlayerShieldIdleState : PlayerState
 
 public class PlayerShieldBashState : PlayerState 
 {
-    public PlayerShieldBashState(string animationName, Player player) : base(animationName, player) {}
+    public float damage = 30f;
+
+    public PlayerShieldBashState(string animationName, Player player) : base(animationName, player) { }
 
     public override bool IsMatchingConditions()
     {
@@ -78,7 +80,8 @@ public class PlayerShieldBashState : PlayerState
         foreach (var enemy in enemies)
         {
             VFXManager.Instance?.PlayEffect("HitVFX", enemy.transform.position, 0.3f);
-            enemy.GetComponent<IDamageable>()?.Damage(10);
+            enemy.GetComponent<IDamageable>()?.Damage(damage);
+            CameraShake.Instance?.Shake(1.5f, 0.3f);
             Vector2 direction = _player.transform.localScale.normalized;
             enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction.x * 3f, 3f), ForceMode2D.Impulse);
         }

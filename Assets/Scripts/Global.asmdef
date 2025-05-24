@@ -4,7 +4,8 @@
     "references": [
         "Unity.InputSystem",
         "Unity.TextMeshPro",
-        "Manager"
+        "Cinemachine",
+        "Cinemachine.Runtime.Tests"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

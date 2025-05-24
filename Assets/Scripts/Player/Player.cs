@@ -7,6 +7,7 @@ public class Player : MonoBehaviour, IDamageable
     public PlayerInputHandler InputHandler { get; private set; }
     public Rigidbody2D RB { get; private set; }
     public Animator Anim { get; private set; }
+    
 
     [field: SerializeField] public PlayerDataSO Data { get; private set; }
     public StateMachine StateMachine { get; private set; }
@@ -16,6 +17,7 @@ public class Player : MonoBehaviour, IDamageable
     public Transform ledgeCheck;
 
     [field: SerializeField] public Inventory Inventory { get; private set; }
+    public PlayerResource Resource { get; private set; }
 
     public Dictionary<EquipmentSlot, ItemDataSO> equippedItems = new();
 
@@ -37,11 +39,9 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private bool _isTouchingLedge;
     public bool IsTouchingLedge => _isTouchingLedge;
 
-    [field: SerializeField] public int CurrentHealth { get ; set; }
-    public float CurrentStamina { get ; set; }
-    public float CurrentMana { get ; set; }
 
     [field: SerializeField] public bool CanPush { get; set; } = false;
+    public Vector2 FacingDirection => transform.localScale;
     
     public bool canLedgeGrab = false;
 
@@ -49,7 +49,7 @@ public class Player : MonoBehaviour, IDamageable
     [Header("Attack")]
     public bool isAttacking;
     public bool isStuning;
-    [Header("CD")]
+    [Header("CD Timer")]
     [SerializeField] public CooldownTimer combatCooldown;
     [SerializeField] public CooldownTimer attackCooldown;
     [SerializeField] public CooldownTimer shieldBashTimer;
@@ -69,10 +69,13 @@ public class Player : MonoBehaviour, IDamageable
         Anim = GetComponentInChildren<Animator>();
         StateMachine = new StateMachine();
         Inventory = new Inventory();
+        Resource = new(Data.maxHealthPoint, Data.maxMana, Data.maxStamina);
+      
     }
 
     void Start()
     {
+        Resource.Changed();
         //SORTING STATE BY PRIORYTY
         StateMachine.AddState(new PlayerIdleState("PlayerIdle", this));
         StateMachine.AddState(new PlayerSwordIdleState("PlayerSwordIdle", this));
@@ -95,7 +98,7 @@ public class Player : MonoBehaviour, IDamageable
         StateMachine.AddState(new PlayerJumpState("PlayerJump", this));
         StateMachine.AddState(new PlayerSwordJumpState("PlayerSwordJump", this));
         StateMachine.AddState(new PlayerSpellCastingState("PlayerSpellCasting", this));
-      
+        
        
         StateMachine.AddState(new PlayerLightAttackState("PlayerAttack", this));
         StateMachine.AddState(new PlayerHeavyAttackState("PlayerHeavyAttack", this));
@@ -105,9 +108,7 @@ public class Player : MonoBehaviour, IDamageable
 
         StateMachine.Initialize(StateMachine.GetState<PlayerFallState>());
 
-        CurrentHealth = Data.maxHealthPoint;
-        CurrentStamina = Data.maxStamina;
-        CurrentMana = Data.maxMana;
+      
     }
   
     void Update() {
@@ -189,24 +190,29 @@ public class Player : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(0.5f);
         isTriggerShieldBash = false;
     }
-    
 
-    public void Damage(int damage) {
-        
-        if(StateMachine.CurrentState is PlayerShieldIdleState) {
+    public Vector2 GetFacingDirection()
+    {
+        return transform.localScale;
+    }
+
+
+    public void Damage(float damage)
+    {
+        if (StateMachine.CurrentState is PlayerShieldIdleState)
+        {
             AudioManager.Instance?.PlaySFX("ShieldGuard");
             isTriggerShieldBash = true;
             StartCoroutine(ResetShieldBashTrigger());
             return;
         }
-        
-        CurrentHealth -= damage;
+        Resource.CurrentHealth -= damage;
         isStuning = true;
-
-        if(CurrentHealth <= 0) {
+        if (Resource.CurrentHealth <= 0)
+        {
             Die();
         }
+        Resource.Changed();
     }
-
-    public void Die() => CurrentHealth = 0; 
+    public void Die() => Resource.CurrentHealth = 0f;
 }

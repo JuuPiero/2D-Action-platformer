@@ -7,8 +7,8 @@ public class PlayerDataSO : ScriptableObject
     public float groundCheckRadius = 0.2f;
     public float wallCheckDistance = 0.3f;
 
-    [Header("Status")]
-    public int maxHealthPoint = 100;
+    [Header("Resource")]
+    public float maxHealthPoint = 100f;
     public float maxStamina = 100f;
     public float maxMana = 200f;
 
@@ -30,6 +30,7 @@ public class PlayerDataSO : ScriptableObject
     [Header("Dash")]
     public float dashSpeed  = 20f;
     public float dashCooldownTime = 0.8f;
+    public float dashTime = 0.3f;
 
 
     [Header("Attack")]

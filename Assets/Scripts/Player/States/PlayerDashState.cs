@@ -7,17 +7,22 @@ public class PlayerDashState : PlayerState
     public SpriteRenderer _sr;
     public int afterimagePoolSize = 10;
     private CooldownTimer dashStopTimer;
-    private List<GameObject> afterimagePool = new List<GameObject>();
+    private List<GameObject> _afterimagePool = new();
 
 
     public PlayerDashState(string animationName, Player player) : base(animationName, player) {
+        LoadImagesObject();
+        _sr = _player.GetComponentInChildren<SpriteRenderer>();
+    }
+
+    void LoadImagesObject()
+    {
         for (int i = 0; i < afterimagePoolSize; i++)
         {
             GameObject obj = GameObject.Instantiate(_player.afterimagePrefab);
             obj.SetActive(false);
-            afterimagePool.Add(obj);
+            _afterimagePool.Add(obj);
         }
-        _sr = _player.GetComponentInChildren<SpriteRenderer>();
     }
 
     public override bool IsMatchingConditions()
@@ -42,7 +47,7 @@ public class PlayerDashState : PlayerState
     }
 
     void StartDash() {
-        dashStopTimer.Start(0.2f);
+        dashStopTimer.Start(_player.Data.dashTime);
         _player.StartCoroutine(CreateAfterImages());
     }
     void StopDash() {
@@ -55,19 +60,19 @@ public class PlayerDashState : PlayerState
         while (!CanExit) {
             GameObject afterimage = GetAfterimageFromPool();
             if (afterimage != null) {
-                afterimage.GetComponent<AfterImage>().Setup(
+                afterimage.GetComponent<AfterImage>().Display(
                     _sr.sprite,
                     _player.transform.position,
                     _player.transform.localScale,
                     new Color(1f, 1f, 1f, 0.5f) // Màu trắng, Alpha = 0.5
                 );
             }
-            yield return new WaitForSeconds(0.005f); // Tạo 1 afterimage mỗi 0.005s
+            yield return new WaitForSeconds(0.009f); // Tạo 1 afterimage mỗi 0.005s
         }
     }
 
     GameObject GetAfterimageFromPool() {
-        foreach (var obj in afterimagePool) {
+        foreach (var obj in _afterimagePool) {
             if (!obj.activeInHierarchy) {
                 return obj;
             }

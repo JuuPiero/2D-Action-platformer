@@ -98,7 +98,7 @@ public class Slime : Enemy
         Gizmos.DrawWireSphere(attackPoint.position, Data.damageRadius);
     }
     
-    public override void Damage(int damage)
+    public override void Damage(float damage)
     {
         attackCooldown.Start(Data.attackCoolDownTime);
         base.Damage(damage);

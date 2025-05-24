@@ -15,7 +15,7 @@ public class PlayerSpellCastingState : PlayerState
     public override void Enter()
     {
         _player.GetComponentInChildren<PlayerAnimation>().OnAnimationTrigger += SpellCast;
-        _player.transform.Find("Aura").gameObject.SetActive(true);
+        //_player.transform.Find("Aura").gameObject.SetActive(true);
         CanExit = false;
         base.Enter();
         // AudioManager.Instance?.PlaySFX("PlayerAttack");
@@ -26,17 +26,13 @@ public class PlayerSpellCastingState : PlayerState
         var enemies = DetectEnemies();
         foreach (var enemy in enemies)
         {
-            // if(_player.CurrentMana > MANA) {
-                Vector3 effectPos = new Vector3(enemy.transform.position.x, _player.groundCheck.position.y, 0);
-                VFXManager.Instance?.PlayEffect("Lightning", effectPos, 0.5f);
-                AudioManager.Instance?.PlaySFX("LightningSFX");
-                enemy.GetComponent<IDamageable>()?.Damage(60);
-                Vector2 direction = _player.transform.localScale.normalized;
-                enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction.x * 3f, 3f), ForceMode2D.Impulse);
-            //     _player.CurrentMana -= MANA;
-            // }
+            Vector3 effectPos = new Vector3(enemy.transform.position.x, _player.groundCheck.position.y, 0);
+            VFXManager.Instance?.PlayEffect("Lightning", effectPos, 0.5f);
+            AudioManager.Instance?.PlaySFX("LightningSFX");
+            enemy.GetComponent<IDamageable>()?.Damage(60);
+            Vector2 direction = _player.transform.localScale.normalized;
+            enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction.x * 3f, 3f), ForceMode2D.Impulse);
         }
-        
         CanExit = true;
         _player.spellCastTimer.Start(2f);
         _player.GetComponentInChildren<PlayerAnimation>().OnAnimationTrigger -= SpellCast;

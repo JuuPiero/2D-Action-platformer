@@ -82,7 +82,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Push"",
+                    ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""601a4611-13b8-4d15-a9bd-39d3bd8f6f1c"",
                     ""expectedControlType"": ""Button"",
@@ -326,11 +326,11 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9cab7271-2d75-4a30-9b2b-48752e965726"",
-                    ""path"": ""<Keyboard>/leftShift"",
+                    ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Push"",
+                    ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -387,7 +387,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_GamePlay_SpellCast = m_GamePlay.FindAction("SpellCast", throwIfNotFound: true);
         m_GamePlay_Dash = m_GamePlay.FindAction("Dash", throwIfNotFound: true);
         m_GamePlay_Attack = m_GamePlay.FindAction("Attack", throwIfNotFound: true);
-        m_GamePlay_Push = m_GamePlay.FindAction("Push", throwIfNotFound: true);
+        m_GamePlay_Interact = m_GamePlay.FindAction("Interact", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_ToggleInventory = m_UI.FindAction("ToggleInventory", throwIfNotFound: true);
@@ -458,7 +458,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_GamePlay_SpellCast;
     private readonly InputAction m_GamePlay_Dash;
     private readonly InputAction m_GamePlay_Attack;
-    private readonly InputAction m_GamePlay_Push;
+    private readonly InputAction m_GamePlay_Interact;
     public struct GamePlayActions
     {
         private @PlayerControls m_Wrapper;
@@ -469,7 +469,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @SpellCast => m_Wrapper.m_GamePlay_SpellCast;
         public InputAction @Dash => m_Wrapper.m_GamePlay_Dash;
         public InputAction @Attack => m_Wrapper.m_GamePlay_Attack;
-        public InputAction @Push => m_Wrapper.m_GamePlay_Push;
+        public InputAction @Interact => m_Wrapper.m_GamePlay_Interact;
         public InputActionMap Get() { return m_Wrapper.m_GamePlay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -497,9 +497,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
-            @Push.started += instance.OnPush;
-            @Push.performed += instance.OnPush;
-            @Push.canceled += instance.OnPush;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
         }
 
         private void UnregisterCallbacks(IGamePlayActions instance)
@@ -522,9 +522,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
-            @Push.started -= instance.OnPush;
-            @Push.performed -= instance.OnPush;
-            @Push.canceled -= instance.OnPush;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
         }
 
         public void RemoveCallbacks(IGamePlayActions instance)
@@ -605,7 +605,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnSpellCast(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
-        void OnPush(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

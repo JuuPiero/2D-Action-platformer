@@ -7,8 +7,9 @@ public class EquipmentDataSO : ItemDataSO
     public int defenseBonus;
     public int attackBonus;
 
-    public override void Use(Player player)
+    public override void Use(object player)
     {
-        player.Equip(this);
+        if(player is Player _player)
+            _player.Equip(this);
     }
 }

@@ -31,8 +31,11 @@ public class PlayerInputHandler : MonoBehaviour
     private bool _jumpPressed;
     public bool JumpPressed => _jumpPressed;
 
-    private bool _pushPressed;
-    public bool PushPressed => _pushPressed;
+    // private bool _pushPressed;
+    // public bool PushPressed => _pushPressed;
+
+    private bool _interactPressed;
+    public bool InteractPressed => _interactPressed;
 
     // public bool JumpReleased { get; private set; }
     private bool _isInventoryPressed;
@@ -67,8 +70,11 @@ public class PlayerInputHandler : MonoBehaviour
         _controls.GamePlay.Attack.canceled += ctx => ReleaseAttack();
 
 
-        _controls.GamePlay.Push.started += ctx => _pushPressed = true;
-        _controls.GamePlay.Push.canceled += ctx => _pushPressed = false;
+        // _controls.GamePlay.Push.started += ctx => _pushPressed = true;
+        // _controls.GamePlay.Push.canceled += ctx => _pushPressed = false;
+
+        _controls.GamePlay.Interact.started += ctx => _interactPressed = true;
+        _controls.GamePlay.Interact.canceled += ctx => _interactPressed = false;
 
 
         // _controls.UI.ToggleInventory.started += ctx => _isInventoryPressed = true;
@@ -80,70 +86,68 @@ public class PlayerInputHandler : MonoBehaviour
         _controls.GamePlay.Disable();
         _controls.UI.Disable();
     }
-    private void StartAttack() {
+    private void StartAttack()
+    {
         _attackPressTime = Time.time;
         _isAttackPressed = true;
         _isHoldingAttack = false;
     }
 
-    private void ReleaseAttack() {
+    private void ReleaseAttack()
+    {
         float holdDuration = Time.time - _attackPressTime;
 
-        if (holdDuration >= HOLD_THRESHOLD) {
+        if (holdDuration >= HOLD_THRESHOLD)
+        {
             _isHoldingAttack = false;
         }
         _isAttackPressed = false;
         _isHoldingAttack = false;
     }
 
-    private void StartShield() {
+    private void StartShield()
+    {
         _shieldPressTime = Time.time;
         _isShieldPressed = true;
         _isHoldingShield = false;
         _isShieldRelease = false;
     }
 
-    private void ReleaseShield() {
+    private void ReleaseShield()
+    {
         float holdDuration = Time.time - _shieldPressTime;
 
-        if (_isHoldingShield) {
+        if (_isHoldingShield)
+        {
             _isShieldRelease = true;
             _isShieldPressed = false;
             _isHoldingShield = false;
             Invoke(nameof(ResetShieldState), 0.3f);
         }
-        else {
+        else
+        {
             // Nếu nhả sớm → Không có tấn công, trở về trạng thái bình thường
             ResetShieldState();
         }
     }
 
-    private void ResetShieldState() {
+    private void ResetShieldState()
+    {
         _isShieldPressed = false;
         _isShieldRelease = false;
         _isHoldingShield = false;
     }
 
-     private void ToggleInventory()
-    {
-        // bool isActive = _inventoryPanel.activeSelf;
-        // _inventoryPanel.SetActive(!isActive);
-
-        // // Chuyển đổi input map
-        // if (!isActive)
-        //     _inputHandler.SwitchToUIInput();
-        // else
-        //     _inputHandler.SwitchToGameplayInput();
-    }
 
     void Update()
     {
         if (_isShieldPressed && (Time.time - _shieldPressTime) >= HOLD_THRESHOLD)
         {
             _isHoldingShield = true;
-        } 
+        }
 
-        if (_isAttackPressed && (Time.time - _attackPressTime) >= HOLD_THRESHOLD) {
+        if (_isAttackPressed && (Time.time - _attackPressTime) >= HOLD_THRESHOLD)
+        {
             _isHoldingAttack = true; // Chuyển sang heavy attack nếu giữ lâu
             _isAttackPressed = false;
         }
@@ -151,10 +155,23 @@ public class PlayerInputHandler : MonoBehaviour
         _jumpPressed = _controls.GamePlay.Jump.WasPressedThisFrame();
         _isInventoryPressed = _controls.UI.ToggleInventory.WasPressedThisFrame();
 
-       if (IsInventoryPressed)
+        if (IsInventoryPressed)
         {
             // ToggleInventory();
-            FindAnyObjectByType<InventoryUI>().ToggleInventory();
+            FindFirstObjectByType<InventoryUI>().Toggle();
+            // _controls
+        }
+    }
+
+    public void SetGameplay(bool enable)
+    {
+        if (enable)
+        {
+            _controls.GamePlay.Enable();
+        }
+        else
+        {
+            _controls.GamePlay.Disable();
         }
     }
 }
