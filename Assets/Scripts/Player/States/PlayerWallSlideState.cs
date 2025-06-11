@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class PlayerWallSlideState : PlayerState 
@@ -7,13 +6,8 @@ public class PlayerWallSlideState : PlayerState
 
     public override bool IsMatchingConditions()
     {
-        return !_player.IsGrounded && _player.IsTouchingWall && _player.InputHandler.Direction.y == 0f
+        return !_player.IsGrounded && _player.IsTouchingWall && _player.IsTouchingLedge
         && (_player.InputHandler.Direction.x * _player.transform.localScale.x > 0f);
-    }
-
-    public override void Enter() 
-    {
-        base.Enter();
     }
     public override void FixedUpdate() 
     {

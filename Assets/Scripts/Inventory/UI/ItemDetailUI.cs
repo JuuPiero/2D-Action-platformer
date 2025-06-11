@@ -7,22 +7,31 @@ public class ItemDetailUI : MonoBehaviour
     public TextMeshProUGUI textName;
     public TextMeshProUGUI descriptionText;
     public Button useButton;
+    public TextMeshProUGUI useTextButton;
     public Button dropButton;
+
+
+    public InventoryUI inventoryUI;
 
     [SerializeField] private Player _player;
     [SerializeField] private SlotUI _slotUI;
 
+    void Awake()
+    {
+        _player = FindFirstObjectByType<Player>();
+    }
 
     void Start()
     {
+        inventoryUI = GetComponentInParent<InventoryUI>();
         useButton.onClick.AddListener(() =>
         {
             UseItem();
         });
         dropButton.onClick.AddListener(() =>
         {
-            ItemManager.Instance.SpawnItem(_slotUI.itemData, _slotUI.quantity, _player.transform.position + new Vector3(2f, 5f));
-            _player.Inventory.RemoveItem(_slotUI.index);
+            ItemManager.Instance?.SpawnItem(_slotUI.itemData, _slotUI.quantity, _player.transform.position + new Vector3(2f * _player.transform.localScale.x, 5f));
+            _player?.Inventory.RemoveItem(_slotUI.index);
         });
     }
 
@@ -48,6 +57,27 @@ public class ItemDetailUI : MonoBehaviour
                 break;
         }
     }
+
+
+    public void Display(ItemDataSO data)
+    {
+        useButton.gameObject.SetActive(true);
+        dropButton.gameObject.SetActive(true);
+        textName.text = data.name;
+        descriptionText.text = data.description;
+    }
+
+    public void Display(EquipmentSlotUI slot)
+    {
+        Display(slot.itemData);
+        useTextButton.text = "Uequip";
+    }
+
+
+    public void SetTextUseButton(string text)
+    {
+        useTextButton.text = text;
+    }
     public void ClearDisplay()
     {
         textName.text = "";
@@ -58,15 +88,17 @@ public class ItemDetailUI : MonoBehaviour
 
     public void UseItem()
     {
-        _slotUI.itemData.Use(_player);
+        Player player = FindFirstObjectByType<Player>();
+        _slotUI.itemData.Use(player);
 
         switch (_slotUI.itemData.itemType)
         {
             case ItemDataSO.ItemType.Equipment:
-
+                _player.Inventory.RemoveItem(_slotUI.index);
                 break;
             case ItemDataSO.ItemType.Consumable:
-                _slotUI.SetQuantity(--_slotUI.quantity);
+                int quantity = _slotUI.quantity - 1;
+                _slotUI.SetQuantity(quantity);
                 if (_slotUI.quantity <= 0) _player.Inventory.RemoveItem(_slotUI.index);
                 break;
         }

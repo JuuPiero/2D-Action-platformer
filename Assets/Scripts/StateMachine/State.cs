@@ -18,9 +18,10 @@ public abstract class State
         AnimationBoolName = animationBoolName;
     }
 
-    public virtual void Enter() 
+    public virtual void Enter()
     {
     }
+   
 
     public virtual void Exit() 
     {

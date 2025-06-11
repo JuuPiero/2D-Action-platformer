@@ -13,11 +13,11 @@ public class SkeletonWalkState : SkeletonState
     public override void Enter()
     {
         base.Enter();
-        AudioManager.Instance?.PlaySFX("SkeletonWalk");
+        // AudioManager.Instance?.PlaySFX("SkeletonWalk");
     }
 
     public override void Exit() {
         base.Exit();
-        AudioManager.Instance?.sfxSource.Stop();
+        // AudioManager.Instance?.sfxSource.Stop();
     }
 }

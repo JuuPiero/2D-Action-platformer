@@ -4,9 +4,10 @@ using UnityEngine;
 public class ItemManager : MonoBehaviour
 {
     public GameObject itemPrefab;
+    public GameObject chestPrefab;
+
     public List<ItemDataSO> items;
     public static ItemManager Instance { get; private set; }
-
     
     [SerializeField] [Range(1, 999)] private int _spawnItemRange = 1; 
 
@@ -23,16 +24,17 @@ public class ItemManager : MonoBehaviour
         item.quantity = quantity;
         itemGO.transform.position = position;
     }
-    
+
     public void SpawnItem(Vector3 position)
     {
-        ItemDataSO r = items[(int)Random.Range(0, items.Count - 1)];
-
+        ItemDataSO r = items[Random.Range(0, items.Count)];
         GameObject itemGO = Instantiate(itemPrefab);
         Item item = itemGO.GetComponent<Item>();
+        var rb = item.GetComponent<Rigidbody2D>();
         item.SetData(r);
-        if(r.isStackable)
-            item.quantity = (int)Random.Range(1, _spawnItemRange);
+        if (r.isStackable)
+            item.quantity = Random.Range(1, _spawnItemRange);
         itemGO.transform.position = position;
+        rb?.AddForce(Vector2.up * 3f, ForceMode2D.Impulse);
     }
 }

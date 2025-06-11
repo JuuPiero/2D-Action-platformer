@@ -18,11 +18,13 @@ public class SkeletonAttackState : SkeletonState {
 
     public override void Enter() {
         _skeleton.GetComponentInChildren<EnemyAnimation>().OnAnimationTrigger += Attack;
-
+        // if (_skeleton.GetDirectionToPlayer().x * _skeleton.transform.localScale.x < 0f)
+        // {
+        //     _skeleton.Flip();
+        // }
         if(attackIndex > MaxAttack) attackIndex = 1;
         AnimationBoolName = AnimationBaseName + "_" + attackIndex;
         base.Enter();
-      
     }
 
     public override void Exit() {

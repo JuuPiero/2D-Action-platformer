@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
@@ -7,26 +8,47 @@ public class InventoryUI : MonoBehaviour
 
     public GameObject slotUIPrefab;
     public GameObject itemListPanel;
-    public GameObject itemDetailPanel;
     public GameObject equipmentPanel;
 
-    [SerializeField] protected Player _player;
+    public ItemDetailUI itemDetailUI;
 
-    // public List<SlotUI> slotUIs;
+    public Image playerAvatar;
+
+    [SerializeField] protected Player _player;
+    [SerializeField] protected Inventory _inventory;
+
+   
 
     public void Toggle()
     {
-        _root.SetActive(!_root.activeSelf);
-        _player.InputHandler.SetGameplay(!_root.activeSelf);
+        _root.Toggle();
+        _player.InputHandler.SetGameplayInput(!_root.activeSelf);
     }
-
+    void Awake()
+    {
+        _player = FindFirstObjectByType<Player>();
+        _inventory = _player.Inventory;
+        playerAvatar.sprite = _player.GetComponentInChildren<SpriteRenderer>().sprite;
+    }
     void Start()
     {
-        Load();
-        _player.Inventory.OnInventoryChanged += Load;
+        LoadInventory();
+        _player.Inventory.OnInventoryChanged += LoadInventory;
+    }
+    void OnDisable()
+    {
+        _player.Inventory.OnInventoryChanged -= LoadInventory;
+    }
+    
+    void Update()
+    {
+        if (_player.InputHandler.IsInventoryPressed)
+        {
+            Toggle();
+        }
     }
 
-    public void Load()
+    public void LoadInventory()
     {
         itemListPanel.transform.ClearChild();
         var slots = _player.Inventory.slots;
@@ -39,8 +61,6 @@ public class InventoryUI : MonoBehaviour
             SlotUI slotUI = slotGO.GetComponent<SlotUI>();
             slotUI.SetSlot(slot);
             slotUI.SetIndex(index);
-            slotUI.inventoryUI = this;
-         
         });
     }
 
@@ -55,7 +75,7 @@ public class InventoryUI : MonoBehaviour
 
     public void DisplayDetail(SlotUI slot)
     {
-        itemDetailPanel.GetComponent<ItemDetailUI>().Display(slot);
+        itemDetailUI.GetComponent<ItemDetailUI>().Display(slot);
     }
 
 }

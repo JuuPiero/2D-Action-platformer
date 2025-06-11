@@ -4,6 +4,8 @@ using System.Collections.Generic;
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
+
+    public GameObject audioSourcePrefab;
     public AudioSource musicSource;
     public AudioSource sfxSource;
     public AudioSource soundSource;
@@ -52,6 +54,19 @@ public class AudioManager : MonoBehaviour
         {
             sfxSource.loop = false;
             sfxSource.Stop();
+        }
+    }
+
+    public void PlaySoundOneShot(string name, Vector3 position)
+    {
+        if (sfxDict.TryGetValue(name, out AudioClip clip))
+        {
+            GameObject audioSourceGO = Instantiate(audioSourcePrefab, position, Quaternion.identity);
+            AudioSource audioSource = audioSourceGO.GetComponent<AudioSource>();
+            //soundSource.PlayOneShot(clip);
+            audioSource.clip = clip;
+            audioSource.PlayOneShot(clip);
+            Destroy(audioSourceGO, clip.length);
         }
     }
 }

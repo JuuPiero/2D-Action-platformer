@@ -1,8 +1,11 @@
 using System;
+using UnityEngine;
 
-public class PlayerResource
+public class PlayerResource : MonoBehaviour
 {
-    private float _currentHealth;
+    public event Action OnPlayerResourceChanged;
+
+    [SerializeField] private float _currentHealth;
     public float CurrentHealth
     {
         get => _currentHealth;
@@ -12,18 +15,32 @@ public class PlayerResource
             OnPlayerResourceChanged?.Invoke();
         }
     }
-    public float CurrentMana { get; set; }
-    public float CurrentStamina { get; set; }
-    public event Action OnPlayerResourceChanged;
-    public PlayerResource(float health, float mana, float stamina)
+    [SerializeField] private float _currentMana;
+    public float CurrentMana
+    {
+        get => _currentMana;
+        set
+        {
+            _currentMana = value;
+            OnPlayerResourceChanged?.Invoke();
+        }
+    }
+
+    [SerializeField] private float _currentStamina;
+    public float CurrentStamina {
+        get => _currentStamina;
+        set
+        {
+            _currentStamina = value;
+            OnPlayerResourceChanged?.Invoke();
+        }
+    }
+
+    public void Init(float health, float mana, float stamina)
     {
         CurrentHealth = health;
         CurrentMana = mana;
         CurrentStamina = stamina;
     }
-
-    public void Changed()
-    {
-        OnPlayerResourceChanged?.Invoke();
-    }
+  
 }

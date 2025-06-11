@@ -65,7 +65,7 @@ public class PlayerShieldBashState : PlayerState
 
     public override void Enter()
     {
-        _player.GetComponentInChildren<PlayerAnimation>().OnAnimationTrigger += ShieldBash;
+        _playerAnim.OnAnimationTrigger += ShieldBash;
         CanExit = false;
         base.Enter();
         AudioManager.Instance?.PlaySFX("PlayerAttack");
@@ -74,8 +74,9 @@ public class PlayerShieldBashState : PlayerState
     public void ShieldBash() 
     {
         var enemies = DetectEnemies();
-        if(enemies.Length > 0) {
-            AudioManager.Instance?.PlaySFX("ShieldBashSFX");
+        if (enemies.Length > 0)
+        {
+            AudioManager.Instance?.PlaySoundOneShot("ShieldBashSFX", enemies[0].transform.position);
         }
         foreach (var enemy in enemies)
         {
@@ -86,7 +87,7 @@ public class PlayerShieldBashState : PlayerState
             enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction.x * 3f, 3f), ForceMode2D.Impulse);
         }
         _player.shieldBashTimer.Start(_player.Data.shieldBashCooldownTime);
-        _player.GetComponentInChildren<PlayerAnimation>().OnAnimationTrigger -= ShieldBash;
+        _playerAnim.OnAnimationTrigger -= ShieldBash;
         CanExit = true;
     }
 

@@ -9,7 +9,13 @@ public class EquipmentDataSO : ItemDataSO
 
     public override void Use(object player)
     {
-        if(player is Player _player)
-            _player.Equip(this);
+        if (player is Player _player)
+            _player.EquipmentManager?.Equip(this);
+    }
+    
+    public void Equip(GameObject player)
+    {
+        // if(player is Player _player)
+        //     _player.Equip(this);
     }
 }

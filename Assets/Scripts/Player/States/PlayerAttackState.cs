@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 
-public class PlayerHeavyAttackState : PlayerState  {
+public class PlayerHeavyAttackState : PlayerState {
     public PlayerHeavyAttackState(string animationName, Player player) : base(animationName, player) {
     }
     ~PlayerHeavyAttackState() {
@@ -14,7 +14,7 @@ public class PlayerHeavyAttackState : PlayerState  {
     }
 
     public override void Enter() {
-        _player.GetComponentInChildren<PlayerAnimation>().OnAttack += Attack;
+        _playerAnim.OnAttack += Attack;
         base.Enter();
         // AudioManager.Instance?.PlaySFX("PlayerAttack");
     }
@@ -37,7 +37,7 @@ public class PlayerHeavyAttackState : PlayerState  {
         base.Exit();
         
         _player.attackCooldown.Start(_player.Data.attackCooldownTime);
-        _player.GetComponentInChildren<PlayerAnimation>().OnAttack -= Attack;
+        _playerAnim.OnAttack -= Attack;
     }
 
     void Attack()
@@ -79,17 +79,17 @@ public class PlayerLightAttackState : PlayerState {
 
     public override void Enter() {
         _player.combatCooldown.Start(_player.Data.combatTime);
-        _player.GetComponentInChildren<PlayerAnimation>().OnAttack += Attack;
+        _playerAnim.OnAttack += Attack;
         CanExit = false;
-        // _player.Data.speed /= 2f;
+       
         _player.RB.velocity = new Vector2(1f, 0f);
         if(AttackIndex > 3) {
             AttackIndex = 1;
         }
         AnimationBoolName = AnimationBaseName + "_" + AttackIndex;
-        AudioManager.Instance?.PlaySound(AnimationBoolName);
-        base.Enter();
+        AudioManager.Instance?.PlaySoundOneShot(AnimationBoolName, _player.transform.position);
         // AudioManager.Instance?.PlaySFX("PlayerAttack");
+        base.Enter();
     }
 
 
@@ -104,13 +104,13 @@ public class PlayerLightAttackState : PlayerState {
         Collider2D[] hitEnemies = DetectEnemies();
         var hitboxes = _player.GetComponent<PlayerHitboxManager>().hitboxes;
         foreach (var enemy in hitEnemies) {
+            enemy.GetComponent<IDamageable>()?.Damage(20);
             VFXManager.Instance?.PlayEffect("HitVFX", hitboxes[0].position, 0.3f);
             AudioManager.Instance?.PlaySFX("SwordSFX_" + AttackIndex);
-            enemy.GetComponent<IDamageable>()?.Damage(20);
             CameraShake.Instance?.Shake(1.5f, 0.3f);
             Debug.Log(enemy.gameObject.name);
         }
-        _player.GetComponentInChildren<PlayerAnimation>().OnAttack -= Attack;
+        _playerAnim.OnAttack -= Attack;
         CanExit = true;
     }
 

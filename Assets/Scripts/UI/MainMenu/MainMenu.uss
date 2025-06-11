@@ -1,22 +1,23 @@
 :root {
     background-image: url("project://database/Assets/Sprites/Summer4.png?fileID=21300000&guid=163c76dad7e793c479dd7b3b14af3d78&type=3#Summer4");
     padding-top: 20px;
-   
 }
 
 .menu-container {
     margin: 0 auto;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
     color: white;
     padding: 10px 10px;
     background-color: rgba(31, 28, 44, 0.7);
     border-radius: 10px;
+    height: 80%;
+    width: 60%;
 }
 
 .menu-btn {
-    padding: 6px 30px;
-    border-radius: 8px;
+    padding: 40px 30px;
+    border-radius: 25px;
     transition: all 0.2s ease-in-out;
     border-width: 2px;
     border-color: #FFFFFF;
@@ -25,6 +26,9 @@
     max-height: 45px;
     margin-bottom: 6px;
     -unity-font-style: bold;
+    width: 50%;
+    height: 25%;
+    font-size: 30px;
   
 }
 .menu-btn:hover {
@@ -38,7 +42,7 @@
 .title {
     color: white;
     margin-bottom: 15px;
-    font-size: 30px;
+    font-size: 90px;
     text-shadow: 2px 5px 20px #000;
     /* -unity-font-style: bold and italic; */
     -unity-font-style: bold; 

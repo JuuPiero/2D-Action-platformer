@@ -2,33 +2,19 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Crate : MonoBehaviour, IPushable, IInteractable {
+public class Crate : MonoBehaviour, IPushable {
 
     [SerializeField] private LayerMask _whoCanPush;
-    
-    // [SerializeField] private Vector2 _detectPlayerColliderSize;
-    // [SerializeField] private BoxCollider2D _playerTriggerCollier;
+  
     private Rigidbody2D _rb;
     private float _moveSpeed = 0f; // Sẽ nhận tốc độ từ Player
-
-    [field: SerializeField] public Image Icon { get ; set; }
+    [field: SerializeField] public string InteractionPrompt { get; set; } = "Push the crate";
 
     void Awake() {
         _rb = GetComponent<Rigidbody2D>();
         _rb.constraints = RigidbodyConstraints2D.FreezePositionX; 
         // if(_playerTriggerCollier != null) {
         //     _detectPlayerColliderSize = _playerTriggerCollier.size;
-        // }
-    }
-
-    void Update()
-    {
-        // if(Mathf.Abs(transform.rotation.z) == 90f) {
-        //     Debug.Log("Here");
-        //     _playerTriggerCollier.size = new Vector2(_detectPlayerColliderSize.y, _detectPlayerColliderSize.x);
-        // }
-        // else {
-        //     _playerTriggerCollier.size = _detectPlayerColliderSize;
         // }
     }
 
@@ -45,7 +31,6 @@ public class Crate : MonoBehaviour, IPushable, IInteractable {
         _rb.velocity = Vector2.zero; // Dừng lại ngay khi player dừng
     }
 
-   
 
     void OnTriggerEnter2D(Collider2D collision)
     {

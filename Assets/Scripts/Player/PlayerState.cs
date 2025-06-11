@@ -1,11 +1,13 @@
 
-public class PlayerState : State
+public abstract class PlayerState : State
 {
     protected Player _player;
+    protected PlayerAnimation _playerAnim;
 
     public PlayerState(string animationBoolName, Player player) : base(animationBoolName)
     {
         _player = player;
+        _playerAnim = _player.GetComponentInChildren<PlayerAnimation>();
     }
     public override void Enter() 
     {

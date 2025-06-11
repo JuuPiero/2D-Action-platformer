@@ -7,7 +7,7 @@ public class Player : MonoBehaviour, IDamageable
     public PlayerInputHandler InputHandler { get; private set; }
     public Rigidbody2D RB { get; private set; }
     public Animator Anim { get; private set; }
-    
+
 
     [field: SerializeField] public PlayerDataSO Data { get; private set; }
     public StateMachine StateMachine { get; private set; }
@@ -18,15 +18,17 @@ public class Player : MonoBehaviour, IDamageable
 
     [field: SerializeField] public Inventory Inventory { get; private set; }
     public PlayerResource Resource { get; private set; }
+    public PlayerEquipmentManager EquipmentManager { get; private set; }
 
-    public Dictionary<EquipmentSlot, ItemDataSO> equippedItems = new();
 
-    public void Equip(EquipmentDataSO equipment)
-    {
-        equippedItems[equipment.slot] = equipment;
-        Debug.Log($"{this.name} equipped {equipment.itemName} in {equipment.slot}");
-        Debug.Log(equippedItems);
-    }
+    // public Dictionary<EquipmentSlot, ItemDataSO> equippedItems = new();
+
+    // public void Equip(EquipmentDataSO equipment)
+    // {
+    //     equippedItems[equipment.slot] = equipment;
+    //     Debug.Log($"{this.name} equipped {equipment.itemName} in {equipment.slot}");
+    //     Debug.Log(equippedItems);
+    // }
 
     [Header("Status")]
     public bool isFacingRight = true;
@@ -42,8 +44,11 @@ public class Player : MonoBehaviour, IDamageable
 
     [field: SerializeField] public bool CanPush { get; set; } = false;
     public Vector2 FacingDirection => transform.localScale;
-    
+
     public bool canLedgeGrab = false;
+
+    public bool winTrigger = false;
+
 
 
     [Header("Attack")]
@@ -64,19 +69,21 @@ public class Player : MonoBehaviour, IDamageable
 
     void Awake()
     {
-        InputHandler = GetComponentInChildren<PlayerInputHandler>();
         RB = GetComponent<Rigidbody2D>();
         Anim = GetComponentInChildren<Animator>();
+        InputHandler = GetComponentInChildren<PlayerInputHandler>();
+
         StateMachine = new StateMachine();
-        Inventory = new Inventory();
-        Resource = new(Data.maxHealthPoint, Data.maxMana, Data.maxStamina);
-      
+        Inventory = GetComponentInChildren<Inventory>();
+        Resource = GetComponentInChildren<PlayerResource>();
+        Resource.Init(Data.maxHealthPoint, Data.maxMana, Data.maxStamina);
+
+        EquipmentManager = GetComponentInChildren<PlayerEquipmentManager>();
     }
 
     void Start()
     {
-        Resource.Changed();
-        //SORTING STATE BY PRIORYTY
+        //SORTING STATE BY PRIORYTY thấp đến cao
         StateMachine.AddState(new PlayerIdleState("PlayerIdle", this));
         StateMachine.AddState(new PlayerSwordIdleState("PlayerSwordIdle", this));
         StateMachine.AddState(new PlayerWalkState("PlayerWalk", this));
@@ -98,37 +105,41 @@ public class Player : MonoBehaviour, IDamageable
         StateMachine.AddState(new PlayerJumpState("PlayerJump", this));
         StateMachine.AddState(new PlayerSwordJumpState("PlayerSwordJump", this));
         StateMachine.AddState(new PlayerSpellCastingState("PlayerSpellCasting", this));
-        
-       
+
+
         StateMachine.AddState(new PlayerLightAttackState("PlayerAttack", this));
         StateMachine.AddState(new PlayerHeavyAttackState("PlayerHeavyAttack", this));
-        // StateMachine.AddState(new PlayerWallSlideState("PlayerWallSlide", this));
+        StateMachine.AddState(new PlayerWallSlideState("PlayerWallSlide", this));
         StateMachine.AddState(new PlayerStunState("PlayerStun", this));
+        StateMachine.AddState(new PlayerWinState("PlayerWin", this));
 
 
         StateMachine.Initialize(StateMachine.GetState<PlayerFallState>());
 
-      
+
     }
-  
-    void Update() {
+
+    void Update()
+    {
         CheckFlip();
         CheckCollision();
 
-        
-        if (_isGrounded && RB.velocity.y <= 0) {
+
+        if (_isGrounded && RB.velocity.y <= 0)
+        {
             jumpCount = 0;
         }
 
-        if (InputHandler.JumpPressed) {
+        if (InputHandler.JumpPressed)
+        {
             Jump();
         }
 
-        
+
         isAttacking = !combatCooldown.IsReady;
-        if(!isAttacking) PlayerLightAttackState.AttackIndex = 1;
-   
-        
+        if (!isAttacking) PlayerLightAttackState.AttackIndex = 1;
+
+
         attackCooldown.Update(Time.deltaTime);
         combatCooldown.Update(Time.deltaTime);
         shieldBashTimer.Update(Time.deltaTime);
@@ -138,21 +149,25 @@ public class Player : MonoBehaviour, IDamageable
         StateMachine.Update();
     }
 
-    void CheckCollision() {
+    void CheckCollision()
+    {
         _isGrounded = Physics2D.OverlapCircle(groundCheck.position, Data.groundCheckRadius, Data.whatIsGround);
         _isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, Data.wallCheckDistance * transform.localScale.x, Data.whatIsGround);
         _isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, Data.wallCheckDistance * transform.localScale.x, Data.whatIsGround);
         canLedgeGrab = IsTouchingWall && !IsTouchingLedge;
     }
 
- 
-    void FixedUpdate() {
-        if(!StateMachine.CurrentIs<PlayerDashState>() && !StateMachine.CurrentIs<PlayerLedgeGrabState>()) {
+
+    void FixedUpdate()
+    {
+        if (!StateMachine.CurrentIs<PlayerDashState>() && !StateMachine.CurrentIs<PlayerLedgeGrabState>())
+        {
             RB.velocity = new Vector2(Data.speed * InputHandler.Direction.x, RB.velocity.y);
         }
         StateMachine.FixedUpdate();
     }
-    void OnDrawGizmos() {
+    void OnDrawGizmos()
+    {
         Gizmos.DrawWireSphere(groundCheck.position, Data.groundCheckRadius);
         Gizmos.DrawLine(wallCheck.position,
             new Vector3((wallCheck.position.x + Data.wallCheckDistance * transform.localScale.x),
@@ -165,28 +180,37 @@ public class Player : MonoBehaviour, IDamageable
             ledgeCheck.position.z));
     }
 
-    public void Jump() {
-        if(jumpCount < Data.maxJumps) {
+    public void Jump()
+    {
+        if (jumpCount < Data.maxJumps)
+        {
             jumpCount++;
             RB.velocity = new Vector2(RB.velocity.x, Data.jumpForce);
         }
     }
 
-    public void CheckFlip() {
-        var s = transform.localScale;
-
-        if(isFacingRight && InputHandler.Direction.x < 0f) {
-            isFacingRight = !isFacingRight;
-            s.x *= -1;
-            transform.localScale = s;
+    public void CheckFlip()
+    {
+        if (isFacingRight && InputHandler.Direction.x < 0f)
+        {
+            Flip();
         }
-        else if(!isFacingRight && InputHandler.Direction.x > 0f) {
-            isFacingRight = !isFacingRight;
-            s.x *= -1;
-            transform.localScale = s;
+        else if (!isFacingRight && InputHandler.Direction.x > 0f)
+        {
+            Flip();
         }
     }
-    private IEnumerator ResetShieldBashTrigger() {
+
+    void Flip()
+    {
+        var s = transform.localScale;
+        isFacingRight = !isFacingRight;
+        s.x *= -1;
+        transform.localScale = s;
+    }
+
+    private IEnumerator ResetShieldBashTrigger()
+    {
         yield return new WaitForSeconds(0.5f);
         isTriggerShieldBash = false;
     }
@@ -211,8 +235,10 @@ public class Player : MonoBehaviour, IDamageable
         if (Resource.CurrentHealth <= 0)
         {
             Die();
+         
         }
-        Resource.Changed();
     }
     public void Die() => Resource.CurrentHealth = 0f;
+
+  
 }

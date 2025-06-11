@@ -43,18 +43,10 @@ public class Skeleton : Enemy, IKnockbackable {
 
     void FixedUpdate()
     {
-        canAttack = Physics2D.OverlapCircle(attackPoint.position, Data.attackRadius, playerLayer);
+        canAttack = Physics2D.OverlapCircle(transform.position, Data.attackRange, playerLayer);
         canChase = Physics2D.OverlapCircle(transform.position, Data.detectionRadius, playerLayer) && !canAttack;
         
         if(canChase) {
-            Vector2 playerPos = _targetPlayer.transform.position;
-            float deltaX = Mathf.Abs(playerPos.x - transform.position.x);
-
-            // Chỉ đổi hướng nếu khoảng cách X đủ lớn để tránh quay liên tục
-            if (deltaX < 0.5f)
-            {
-                return;
-            }
             Direction = GetDirectionToPlayer();
             RB.velocity = new Vector2(Direction.x * Data.chaseSpeed, RB.velocity.y);
         }
@@ -64,6 +56,7 @@ public class Skeleton : Enemy, IKnockbackable {
     void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, Data.detectionRadius);
+        Gizmos.DrawWireSphere(transform.position, Data.attackRange);
         Gizmos.DrawWireSphere(attackPoint.position, Data.attackRadius);
     }
 

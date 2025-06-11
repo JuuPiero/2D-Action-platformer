@@ -70,15 +70,10 @@ public class PlayerInputHandler : MonoBehaviour
         _controls.GamePlay.Attack.canceled += ctx => ReleaseAttack();
 
 
-        // _controls.GamePlay.Push.started += ctx => _pushPressed = true;
-        // _controls.GamePlay.Push.canceled += ctx => _pushPressed = false;
 
         _controls.GamePlay.Interact.started += ctx => _interactPressed = true;
         _controls.GamePlay.Interact.canceled += ctx => _interactPressed = false;
 
-
-        // _controls.UI.ToggleInventory.started += ctx => _isInventoryPressed = true;
-        // _controls.UI.ToggleInventory.canceled += ctx => _isInventoryPressed = false;
     }
 
     private void OnDisable()
@@ -155,15 +150,10 @@ public class PlayerInputHandler : MonoBehaviour
         _jumpPressed = _controls.GamePlay.Jump.WasPressedThisFrame();
         _isInventoryPressed = _controls.UI.ToggleInventory.WasPressedThisFrame();
 
-        if (IsInventoryPressed)
-        {
-            // ToggleInventory();
-            FindFirstObjectByType<InventoryUI>().Toggle();
-            // _controls
-        }
+      
     }
 
-    public void SetGameplay(bool enable)
+    public void SetGameplayInput(bool enable)
     {
         if (enable)
         {

@@ -5,7 +5,13 @@
         "Unity.InputSystem",
         "Unity.TextMeshPro",
         "Cinemachine",
-        "Cinemachine.Runtime.Tests"
+        "Cinemachine.Runtime.Tests",
+        "Utils",
+        "StateMachine",
+        "PlayerInput",
+        "Extensions",
+        "UI",
+        "Character"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

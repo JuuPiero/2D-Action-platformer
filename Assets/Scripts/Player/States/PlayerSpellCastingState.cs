@@ -18,17 +18,17 @@ public class PlayerSpellCastingState : PlayerState
         //_player.transform.Find("Aura").gameObject.SetActive(true);
         CanExit = false;
         base.Enter();
-        // AudioManager.Instance?.PlaySFX("PlayerAttack");
+        AudioManager.Instance?.PlaySoundOneShot("LightlingSpell", _player.transform.position);
     }
 
     public void SpellCast() 
     {
         var enemies = DetectEnemies();
+        if(enemies.Length > 0) AudioManager.Instance?.PlaySoundOneShot("LightningSFX", enemies[0].transform.position);
         foreach (var enemy in enemies)
         {
             Vector3 effectPos = new Vector3(enemy.transform.position.x, _player.groundCheck.position.y, 0);
             VFXManager.Instance?.PlayEffect("Lightning", effectPos, 0.5f);
-            AudioManager.Instance?.PlaySFX("LightningSFX");
             enemy.GetComponent<IDamageable>()?.Damage(60);
             Vector2 direction = _player.transform.localScale.normalized;
             enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction.x * 3f, 3f), ForceMode2D.Impulse);

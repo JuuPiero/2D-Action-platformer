@@ -12,7 +12,7 @@ public static class TransformExtensions
     }
 
 
-    public static List<T> GetChilds<T>(this Transform transform)  where T : Component
+    public static List<T> GetChilds<T>(this Transform transform) where T : Component
     {
         List<T> childs = new();
         int count = transform.childCount;
@@ -24,4 +24,20 @@ public static class TransformExtensions
         }
         return childs;
     }
+
+    public static List<T> GetChildsRecursive<T>(this Transform transform) where T : Component
+    {
+        List<T> result = new();
+        foreach (Transform child in transform)
+        {
+            T component = child.GetComponent<T>();
+            if (component != null)
+                result.Add(component);
+
+            // Đệ quy lấy từ con của child
+            result.AddRange(child.GetChildsRecursive<T>());
+        }
+        return result;
+    }
+    
 }

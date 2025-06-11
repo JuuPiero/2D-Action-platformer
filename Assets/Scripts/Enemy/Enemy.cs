@@ -1,19 +1,21 @@
 using UnityEngine;
-public class Enemy : MonoBehaviour, IDamageable {
+public abstract class Enemy : MonoBehaviour, IDamageable
+{
     [SerializeField] public LayerMask playerLayer;
     [SerializeField] protected Player _targetPlayer;
-    
+
     //[SerializeField] protected CinemachineImpulseSource impulseSource;
+    public bool IsFacingRight { get; set; }
+
 
     public Transform attackPoint;
 
     [field: SerializeField] public float CurrentHealth { get; set; } = 100f;
     [field: SerializeField] public Vector2 Direction { get; set; }
-    public bool IsFacingRight { get; set; }
 
     protected virtual void Start()
     {
-        _targetPlayer = FindAnyObjectByType<Player>();
+        _targetPlayer = FindFirstObjectByType<Player>();
     }
 
     protected virtual void Update()
@@ -21,40 +23,46 @@ public class Enemy : MonoBehaviour, IDamageable {
         CheckFlip();
     }
 
-    public void CheckFlip() 
+    public void CheckFlip()
     {
-        var s = transform.localScale;
-        if(IsFacingRight && Direction.x < 0f) 
+        if (IsFacingRight && Direction.x < 0f)
         {
-            IsFacingRight = !IsFacingRight;
-            s.x *= -1;
-            transform.localScale = s;
+            Flip();
         }
-        else if(!IsFacingRight && Direction.x > 0f)
+        else if (!IsFacingRight && Direction.x > 0f)
         {
-            IsFacingRight = !IsFacingRight;
-            s.x *= -1;
-            transform.localScale = s;
+            Flip();
         }
     }
-   
-    public Vector2 GetDirectionToPlayer() {
+
+    public Vector2 GetDirectionToPlayer()
+    {
         var v = _targetPlayer.transform.position - transform.position;
         v.y = 0f;
         return v.normalized;
     }
 
-    public virtual void Damage(float damage) {
+    public virtual void Damage(float damage)
+    {
         CurrentHealth -= damage;
-        if(CurrentHealth <= 0) {
+        if (CurrentHealth <= 0)
+        {
             Die();
         }
         //GetComponent<Rigidbody2D>().velocity = new Vector2(-transform.localScale.x * 2f, 2f);
     }
-    
-    public virtual void Die() 
+
+    public virtual void Die()
     {
         ItemManager.Instance?.SpawnItem(gameObject.transform.position);
         Destroy(gameObject);
+    }
+    
+    public void Flip()
+    {
+        var s = transform.localScale;
+        IsFacingRight = !IsFacingRight;
+        s.x *= -1;
+        transform.localScale = s;
     }
 }
